@@ -1,7 +1,7 @@
 -- Task scheduler --
 logger.log("Initializing scheduler")
 do
-  _G.sched = {}
+  local sched = {}
   
   local ps, uptime = computer.pullSignal, computer.uptime
   local create, status, resume, yield = coroutine.create, coroutine.status, coroutine.resume, coroutine.yield
@@ -134,4 +134,6 @@ do
   function computer.pullSignal(t)
     yield(t)
   end
+  
+  _G.sched = sched
 end

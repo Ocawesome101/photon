@@ -1,7 +1,13 @@
 -- P-Kernel, the heart of Proton --
 
-local _BUILD_ID = "46ae687"
-local _KERNEL_NAME = "P-Kernel"
+local _BUILD_ID = "fb75463"
+local _KERNEL_NAME = "Proton"
+function os.build()
+  return _BUILD_ID
+end
+function os.uname()
+  return _KERNEL_NAME
+end
 
 -- Boot filesystem proxy, for loading drivers. --
 local addr = computer.getBootAddress()
@@ -105,7 +111,7 @@ end
 -- Task scheduler --
 logger.log("Initializing scheduler")
 do
-  _G.sched = {}
+  local sched = {}
   
   local ps, uptime = computer.pullSignal, computer.uptime
   local create, status, resume, yield = coroutine.create, coroutine.status, coroutine.resume, coroutine.yield
@@ -213,21 +219,21 @@ do
           sig = signals[1]
           table.remove(signals, 1)
         end
-        local ok, err
+        local ok, ret
         if #sig > 0 then
-          ok, err = resume(process.coro, sched.signals.event, table.unpack(sig))
+          ok, ret = resume(process.coro, sched.signals.event, table.unpack(sig))
         elseif #process.ipc_buffer > 0 then
           local ipc = process.ipc_buffer[1]
           table.remove(process.ipc_buffer, 1)
-          ok, err = resume(process.coro, sched.signals.ipc, table.unpack(ipc))
+          ok, ret = resume(process.coro, sched.signals.ipc, table.unpack(ipc))
         elseif process.sig > 0 then
           local psig = process.sig
           process.sig = nil
-          ok, err = resume(process.coro, psig)
+          ok, ret = resume(process.coro, psig)
         end
-        if not ok and err then
+        if not ok and ret then
           process.dead = true
-          handleError(process.pid, err)
+          handleError(process.pid, ret)
         end
       end
       autokill()
@@ -238,6 +244,8 @@ do
   function computer.pullSignal(t)
     yield(t)
   end
+  
+  _G.sched = sched
 end
 
 
@@ -262,3 +270,4 @@ if not s then
   freeze(r)
 end
 sched.start()
+

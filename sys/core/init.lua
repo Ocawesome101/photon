@@ -3,7 +3,7 @@
 local logger = ...
 local fs = drivers.filesystem
 
-logger.prefix = "Proton Init: "
+logger.prefix = "Proton Init:"
 
 logger.log("Started")
 
@@ -14,8 +14,8 @@ local init_config = {
   {type = "script", name = "drivers", file = "/sys/core/drivers.lua"},
   {type = "script", name = "io", file = "/sys/core/io.lua"},
   {type = "script", name = "package", file = "/sys/core/package.lua"},
-  {type = "script", name = "userspace", file = "/sys/core/userspace.lua"},
-  {type = "daemon", name = "inputd", file = "/sys/services/inputd.lua"}
+  {type = "daemon", name = "inputd", file = "/sys/services/inputd.lua"},
+  {type = "script", name = "userspace", file = "/sys/core/userspace.lua"}
 }
 
 function _G.loadfile(file, mode, env, prefix)
@@ -38,7 +38,7 @@ function _G.loadfile(file, mode, env, prefix)
   until not chunk
   
   handle.close()
-  return load(prefix .. sfile, "=" .. file, mode, env)
+  return load(prefix .. data, "=" .. file, mode, env)
 end
 
 local ok, err = loadfile("/sys/init.cfg", "t", {}, "return ")
@@ -52,13 +52,13 @@ end
 for _, item in ipairs(init_config) do
   local ok, err = loadfile(item.file)
   if not ok then
-    logger.log("WARN:", item.file .. ":", err)
+    logger.log("ERR:", item.file .. ":", err)
   else
     if item.type == "script" then
-      logger.log("Running startup script", item.name)
-      xpcall(ok, function(...)logger.log("WARN:", ...)end)
+      logger.log("Running startup script:", item.name)
+      xpcall(function()return ok(logger)end, function(...)logger.log("ERR:", ...)end)
     elseif item.type == "daemon" then
-      logger.log("Starting service", item.name)
+      logger.log("Starting service:", item.name)
       sched.spawn(ok, item.name)
     end
   end
