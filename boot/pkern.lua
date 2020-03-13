@@ -1,6 +1,6 @@
 -- P-Kernel, the heart of Proton --
 
-local _BUILD_ID = "fa44120"
+local _BUILD_ID = "46ae687"
 local _KERNEL_NAME = "P-Kernel"
 
 -- Boot filesystem proxy, for loading drivers. --
@@ -45,7 +45,7 @@ logger.log("Initializing")
 logger.log("Kernel revision:", _BUILD_ID)
 
 -- Load kernel configuration from /kernel.cfg --
-local _DEFAULT_CONFIG = {drivers = {"filesystem","logger","user_io","internet"},userspace = {sandbox = true},init="/sys/core/init.lua"}
+local _DEFAULT_CONFIG = {drivers = {"filesystem","logger","user_io","internet"},init="/sys/core/init.lua"}
 local _CONFIG = {}
 local handle = bootfs.open("/boot/kernel.cfg")
 if not handle then
@@ -257,7 +257,7 @@ local ok, err = load(data, "=" .. _CONFIG.init, "t", _G)
 if not ok then
   freeze(err)
 end
-local s, r = sched.spawn(function()return ok(logger, _CONFIG.userspace)end, "init", freeze)
+local s, r = sched.spawn(function()return ok(logger)end, "init", freeze)
 if not s then
   freeze(r)
 end
