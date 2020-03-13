@@ -14,7 +14,9 @@ do
   local signals = {}
   local function autosleep()
     local sig = {ps(sleeptineout)}
-    signals[#signals + 1] = sig
+    if #sig > 0 then
+      signals[#signals + 1] = sig
+    end
   end
   
   local function autokill()
@@ -48,6 +50,9 @@ do
   }
 
   function sched.spawn(func, name, handler)
+    checkArg(1, func, "function")
+    checkArg(2, name, "string")
+    checkArg(2, handler, "function", "nil")
     local ps = {
       coro = create(func),
       name = name,
