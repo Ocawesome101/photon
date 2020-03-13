@@ -10,12 +10,12 @@ logger.log("Started")
 -- Available types are:
 --   script: runs once, intended to initialize APIs
 --   daemon: runs in background
-
 local init_config = {
   {type = "script", name = "drivers", file = "/sys/core/drivers.lua"},
   {type = "script", name = "io", file = "/sys/core/io.lua"},
   {type = "script", name = "package", file = "/sys/core/package.lua"},
-  {type = "script", name = "userspace", file = "/sys/core/userspace.lua"}
+  {type = "script", name = "userspace", file = "/sys/core/userspace.lua"},
+  {type = "daemon", name = "inputd", file = "/sys/services/inputd.lua"}
 }
 
 function _G.loadfile(file, mode, env, prefix)

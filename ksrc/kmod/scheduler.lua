@@ -109,21 +109,21 @@ do
           sig = signals[1]
           table.remove(signals, 1)
         end
-        local ok, err
+        local ok, ret
         if #sig > 0 then
-          ok, err = resume(process.coro, sched.signals.event, table.unpack(sig))
+          ok, ret = resume(process.coro, sched.signals.event, table.unpack(sig))
         elseif #process.ipc_buffer > 0 then
           local ipc = process.ipc_buffer[1]
           table.remove(process.ipc_buffer, 1)
-          ok, err = resume(process.coro, sched.signals.ipc, table.unpack(ipc))
+          ok, ret = resume(process.coro, sched.signals.ipc, table.unpack(ipc))
         elseif process.sig > 0 then
           local psig = process.sig
           process.sig = nil
-          ok, err = resume(process.coro, psig)
+          ok, ret = resume(process.coro, psig)
         end
-        if not ok and err then
+        if not ok and ret then
           process.dead = true
-          handleError(process.pid, err)
+          handleError(process.pid, ret)
         end
       end
       autokill()

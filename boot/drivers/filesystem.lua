@@ -130,6 +130,9 @@ function fs.open(file, mode)
   handle.close = function()
     proxy.close(h)
   end
+  handle.seek = function(w, o)
+    return proxy.seek(w, o)
+  end
   handle.handle = function()
     return h
   end
