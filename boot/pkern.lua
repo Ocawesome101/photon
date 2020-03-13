@@ -1,6 +1,6 @@
 -- P-Kernel, the heart of Proton --
 
-local _BUILD_ID = "0b4b3ed"
+local _BUILD_ID = "fa44120"
 local _KERNEL_NAME = "P-Kernel"
 
 -- Boot filesystem proxy, for loading drivers. --
@@ -21,6 +21,7 @@ do
     local y = 1
     local w, h = invoke(gpu, "maxResolution")
     invoke(gpu, "setResolution", w, h)
+    invoke(gpu, "fill", 1, 1, w, h, " ")
     logger.log = function(...)
       local msg = table.concat({logger.prefix, ...}, " ")
       invoke(gpu, "set", 1, y, msg)
@@ -83,20 +84,20 @@ local function load_driver(driver)
     bootfs.close(handle)
     local ok, err = load(data, "=driver_" .. driver, "t", _G)
     if not ok then
-      return false, err
+      return nil, err
     end
-    return ok
+    return pcall(ok)
   end
   return false, "Driver not found"
 end
 _G.drivers = {}
 for _, driver in ipairs(_CONFIG.drivers) do
   logger.log("Loading driver " .. driver)
-  local ok, err = load_driver(driver)
-  if not ok and err then
-    logger.log(string.format("Failed to load driver %s: %s", driver, err))
+  local ok, ret = load_driver(driver)
+  if not ok and ret then
+    logger.log(string.format("Failed to load driver %s: %s", driver, ret))
   else
-    _G.drivers[driver] = ok
+    _G.drivers[driver] = ret
   end
 end
 
@@ -256,7 +257,7 @@ local ok, err = load(data, "=" .. _CONFIG.init, "t", _G)
 if not ok then
   freeze(err)
 end
-local s, r = sched.spawn(function()return ok(logger,_CONFIG.userspace)end, "init", freeze)
+local s, r = sched.spawn(function()return ok(logger, _CONFIG.userspace)end, "init", freeze)
 if not s then
   freeze(r)
 end

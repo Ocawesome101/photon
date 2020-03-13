@@ -2,7 +2,14 @@
 
 local fs = {}
 
-local mounts = {}
+local boot_address = computer.getBootAddress()
+
+local mounts = {
+  {
+    path = "/",
+    proxy = component.proxy(boot_address)
+  }
+}
 
 local function cleanPath(p)
   checkArg(1, p, "string")
@@ -279,10 +286,8 @@ function fs.size(path)
   return proxy.size(path)
 end
 
-fs.mount(computer.getBootAddress(), "/")
-
 for addr, _ in component.list("filesystem") do
-  if addr ~= bootfs.address then
+  if addr ~= boot_address then
     if component.invoke(addr, "getLabel") == "tmpfs" then
       fs.mount(addr, "/sys/temp")
     elseif component.invoke(addr, "exists", ".protonmount") then -- .protonmount can specify a mount path

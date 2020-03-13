@@ -11,6 +11,7 @@ do
     local y = 1
     local w, h = invoke(gpu, "maxResolution")
     invoke(gpu, "setResolution", w, h)
+    invoke(gpu, "fill", 1, 1, w, h, " ")
     logger.log = function(...)
       local msg = table.concat({logger.prefix, ...}, " ")
       invoke(gpu, "set", 1, y, msg)

@@ -11,19 +11,19 @@ local function load_driver(driver)
     bootfs.close(handle)
     local ok, err = load(data, "=driver_" .. driver, "t", _G)
     if not ok then
-      return false, err
+      return nil, err
     end
-    return ok
+    return pcall(ok)
   end
   return false, "Driver not found"
 end
 _G.drivers = {}
 for _, driver in ipairs(_CONFIG.drivers) do
   logger.log("Loading driver " .. driver)
-  local ok, err = load_driver(driver)
-  if not ok and err then
-    logger.log(string.format("Failed to load driver %s: %s", driver, err))
+  local ok, ret = load_driver(driver)
+  if not ok and ret then
+    logger.log(string.format("Failed to load driver %s: %s", driver, ret))
   else
-    _G.drivers[driver] = ok
+    _G.drivers[driver] = ret
   end
 end
