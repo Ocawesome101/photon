@@ -14,7 +14,8 @@ local ok, err = load(data, "=" .. _CONFIG.init, "t", _G)
 if not ok then
   freeze(err)
 end
-local s, r = sched.spawn(ok, "init", freeze)
+local s, r = sched.spawn(function()return ok(logger,_CONFIG.userspace)end, "init", freeze)
 if not s then
   freeze(r)
 end
+sched.start()

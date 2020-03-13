@@ -1,3 +1,106 @@
+-- P-Kernel, the heart of Proton --
+
+local _BUILD_ID = "0b4b3ed"
+local _KERNEL_NAME = "P-Kernel"
+
+-- Boot filesystem proxy, for loading drivers. --
+local addr = computer.getBootAddress()
+local bootfs = component.proxy(addr)
+
+
+-- Logging --
+local logger = {}
+do
+  local invoke = component.invoke
+  logger.log = function()end
+  logger.prefix = _KERNEL_NAME .. ":"
+  local gpu = component.list("gpu")()
+  local screen = component.list("screen")()
+  if gpu and screen then
+    invoke(gpu, "bind", screen)
+    local y = 1
+    local w, h = invoke(gpu, "maxResolution")
+    invoke(gpu, "setResolution", w, h)
+    logger.log = function(...)
+      local msg = table.concat({logger.prefix, ...}, " ")
+      invoke(gpu, "set", 1, y, msg)
+      if y < h then
+        y = y + 1
+      else
+        invoke(gpu, "copy", 1, 1, w, h, 0, -1)
+        invoke(gpu, "fill", 1, h, w, 1, " ")
+      end
+    end
+  end
+end
+local function freeze(...)
+  logger.log("ERR:", ...)
+  while true do
+    computer.pullSignal()
+  end
+end
+
+logger.log("Initializing")
+logger.log("Kernel revision:", _BUILD_ID)
+
+-- Load kernel configuration from /kernel.cfg --
+local _DEFAULT_CONFIG = {drivers = {"filesystem","logger","user_io","internet"},userspace = {sandbox = true},init="/sys/core/init.lua"}
+local _CONFIG = {}
+local handle = bootfs.open("/boot/kernel.cfg")
+if not handle then
+  _CONFIG = _DEFAULT_CONFIG
+else
+  local data = ""
+  repeat
+    local chunk = bootfs.read(handle, math.huge)
+    data = data .. (chunk or "")
+  until not chunk
+  bootfs.close(handle)
+  local ok, err = load("return " ..data, "=/boot/kernel.cfg", "t", {})
+  if not ok then
+    _CONFIG = _DEFAULT_CONFIG
+  else
+    local s, r = pcall(ok)
+    if not s then
+      _CONFIG = _DEFAULT_CONFIG
+    end
+    _CONFIG = r
+    _CONFIG.init = _CONFIG.init or _DEFAULT_CONFIG.init
+  end
+end
+
+
+-- Load drivers
+local driverpath = "/boot/drivers/"
+local function load_driver(driver)
+  if bootfs.exists(driverpath .. driver .. ".lua") then
+    local handle, err = bootfs.open(driverpath .. driver .. ".lua")
+    local data = ""
+    repeat
+      local chunk = bootfs.read(handle, math.huge)
+      data = data .. (chunk or "")
+    until not chunk
+    bootfs.close(handle)
+    local ok, err = load(data, "=driver_" .. driver, "t", _G)
+    if not ok then
+      return false, err
+    end
+    return ok
+  end
+  return false, "Driver not found"
+end
+_G.drivers = {}
+for _, driver in ipairs(_CONFIG.drivers) do
+  logger.log("Loading driver " .. driver)
+  local ok, err = load_driver(driver)
+  if not ok and err then
+    logger.log(string.format("Failed to load driver %s: %s", driver, err))
+  else
+    _G.drivers[driver] = ok
+  end
+end
+
+
 -- Task scheduler --
 logger.log("Initializing scheduler")
 do
@@ -135,3 +238,27 @@ do
     yield(t)
   end
 end
+
+
+-- Launch init --
+logger.log("Launching init from", _CONFIG.init)
+local handle, err = bootfs.open(_CONFIG.init)
+if not handle then
+  freeze("File not found:", err)
+end
+local data = ""
+repeat
+  local chunk = bootfs.read(handle, math.huge)
+  data = data .. (chunk or "")
+until not chunk
+bootfs.close(handle)
+local ok, err = load(data, "=" .. _CONFIG.init, "t", _G)
+if not ok then
+  freeze(err)
+end
+local s, r = sched.spawn(function()return ok(logger,_CONFIG.userspace)end, "init", freeze)
+if not s then
+  freeze(r)
+end
+sched.start()
+
