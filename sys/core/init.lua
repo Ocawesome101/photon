@@ -61,7 +61,7 @@ for _, item in ipairs(init_config) do
       xpcall(function()return ok(logger)end, function(...)logger.log("ERR:", ...)end)
     elseif item.type == "daemon" then
       logger.log("Starting service:", item.name)
-      sched.spawn(ok, item.name)
+      sched.spawn(function()return ok(logger)end, item.name)
     end
   end
 end

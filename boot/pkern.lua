@@ -1,6 +1,6 @@
 -- P-Kernel, the heart of Proton --
 
-local _BUILD_ID = "b733621"
+local _BUILD_ID = "2613735"
 local _KERNEL_NAME = "Proton"
 function os.build()
   return _BUILD_ID
@@ -120,11 +120,11 @@ do
   local processes = {}
   local currentpid = 0
   local pid = 1
-  local sleeptimeout = _CONFIG.process_timeout or 0.05
+  local sleeptimeout = _CONFIG.process_timeout or 0.5
   
   local signals = {}
   local function autosleep()
-    local sig = {ps(sleeptineout)}
+    local sig = {ps()}
     if #sig > 0 then
       signals[#signals + 1] = sig
     end
@@ -167,7 +167,7 @@ do
   function sched.spawn(func, name, handler)
     checkArg(1, func, "function")
     checkArg(2, name, "string")
-    checkArg(2, handler, "function", "nil")
+    checkArg(3, handler, "function", "nil")
     local ps = {
       coro = create(func),
       name = name,
@@ -220,15 +220,16 @@ do
   function sched.start()
     sched.start = nil
     while #processes > 0 do
+      local sig = {}
+      if #signals > 0 then
+        sig = signals[1]
+        table.remove(signals, 1)
+      end
+
       for pid, _ in pairs(processes) do
         processes[pid].runtime = uptime() - processes[pid].starttime
         processes[pid].started = true
         processes[pid].running = true
-        local sig = {}
-        if #signals > 0 then
-          sig = signals[1]
-          table.remove(signals, 1)
-        end
         local ok, ret
         if #sig > 0 then
           ok, ret = resume(processes[pid].coro, sched.signals.event, table.unpack(sig))
@@ -254,11 +255,7 @@ do
     end
     logger.log("All processes died")
   end
-  
-  function computer.pullSignal()
-    yield()
-  end
-  
+
   _G.sched = sched
 end
 
