@@ -102,7 +102,6 @@ do
         process.dead = true
       end
     end
-    autokill()
   end
   
   function sched.current()
