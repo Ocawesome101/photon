@@ -1,6 +1,6 @@
 -- P-Kernel, the heart of Proton --
 
-local _BUILD_ID = "74d9d1e"
+local _BUILD_ID = "dc58eda"
 local _KERNEL_NAME = "Proton"
 function os.build()
   return _BUILD_ID
