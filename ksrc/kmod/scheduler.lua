@@ -33,7 +33,6 @@ do
   end
   
   local function handleError(pid, err)
-    logger.log("Handling", err, pid)
     local handler = processes[pid].handler
     if not handler or type(handler) ~= "function" then
       if not processes[processes[pid].parent] then
@@ -60,7 +59,7 @@ do
     local ps = {
       coro = create(func),
       name = name,
-      handler = handler or error,
+      handler = handler,
       pid = pid,
       parent = currentpid,
       ipc_buffer = {},
@@ -106,6 +105,10 @@ do
     autokill()
   end
   
+  function sched.current()
+    return currentpid
+  end
+  
   function sched.start()
     sched.start = nil
     while #processes > 0 do
@@ -116,6 +119,7 @@ do
       end
 
       for pid, _ in pairs(processes) do
+        currentpid = pid
         processes[pid].runtime = uptime() - processes[pid].starttime
         processes[pid].started = true
         processes[pid].running = true
