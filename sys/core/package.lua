@@ -17,7 +17,8 @@ package.loaded = {
   ["unicode"] = unicode,
   ["coroutine"] = coroutine,
   ["sched"] = sched,
-  ["drivers"] = drivers
+  ["drivers"] = drivers,
+  ["signals"] = sched.signals
 }
 
 _G.component, _G.computer, _G.unicode, _G.drivers, _G.sched = nil, nil, nil, nil, nil

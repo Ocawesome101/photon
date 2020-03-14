@@ -2,6 +2,7 @@
 
 local fs = {}
 
+local component = component
 local boot_address = computer.getBootAddress()
 
 local mounts = {
@@ -68,7 +69,7 @@ function fs.mount(addr, path)
   return false, "Unable to mount"
 end
 
-function fs.unmount(path)
+function fs.umount(path)
   checkArg(1, path, "string")
   for k, v in pairs(mounts) do
     if v.path == path then
@@ -289,12 +290,18 @@ function fs.size(path)
   return proxy.size(path)
 end
 
+fs.makeDirectory("/mounts")
+
 for addr, _ in component.list("filesystem") do
   if addr ~= boot_address then
     if component.invoke(addr, "getLabel") == "tmpfs" then
       fs.mount(addr, "/sys/temp")
     elseif component.invoke(addr, "exists", ".protonmount") then -- .protonmount can specify a mount path
       local h = component.invoke(addr, "open", ".protonmount")
+      local d = component.invoke(addr, "read", math.huge)
+      component.invoke(addr, "close", handle)
+      fs.mount(addr, d)
+    else
       fs.mount(addr)
     end
   end
