@@ -2,6 +2,7 @@
 
 local computer = require("computer")
 local term = require("term")
+local shell = require("shell")
 
 term.clear()
 print("Welcome to a buggy test of Proton.")

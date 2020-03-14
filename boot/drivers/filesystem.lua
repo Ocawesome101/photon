@@ -225,7 +225,7 @@ function fs.rename(source, dest)
   end
 end
 
-function fs.canonicalPath(path)
+function fs.canonical(path)
   checkArg(1, path, "string")
   local segments = string.tokenize("/", path)
   for i=1, #segments, 1 do
@@ -290,7 +290,7 @@ function fs.size(path)
   return proxy.size(path)
 end
 
-fs.makeDirectory("/mounts")
+fs.makeDirectory("/mount")
 
 for addr, _ in component.list("filesystem") do
   if addr ~= boot_address then

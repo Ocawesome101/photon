@@ -109,6 +109,37 @@ do
     return currentpid
   end
   
+  function sched.parent(pid)
+    checkArg(1, pid, "number", "nil")
+    local pid = pid or currentpid
+    
+    if not processes[pid] then
+      return nil, "No such process"
+    end
+    
+    return processes[pid].parent
+  end
+  
+  function sched.processes()
+    local proc = {}
+    for pid, _ in pairs(processes) do
+      proc[#proc + 1] = pid
+    end
+    return proc
+  end
+  
+  function sched.info(pid)
+    checkArg(1, pid, "number", "nil")
+    local pid = pid or currentpid
+
+    if not processes[pid] then
+      return nil, "No such process"
+    end
+    
+    local proc = processes[pid]
+    return {name = proc.name, pid = proc.pid, parent = proc.parent, uptime = proc.runtime, start = proc.starttime, running = proc.running}
+  end
+  
   function sched.start()
     sched.start = nil
     while #processes > 0 do
@@ -120,26 +151,27 @@ do
 
       for pid, _ in pairs(processes) do
         currentpid = pid
-        processes[pid].runtime = uptime() - processes[pid].starttime
-        processes[pid].started = true
-        processes[pid].running = true
+        local proc = processes[pid]
+        proc.runtime = uptime() - proc.starttime
+        proc.started = true
+        proc.running = true
         local ok, ret
         if #sig > 0 then
-          ok, ret = resume(processes[pid].coro, sched.signals.event, table.unpack(sig))
-        elseif #processes[pid].ipc_buffer > 0 then
-          local ipc = processes[pid].ipc_buffer[1]
-          table.remove(processes[pid].ipc_buffer, 1)
-          ok, ret = resume(processes[pid].coro, sched.signals.ipc, table.unpack(ipc))
-        elseif processes[pid].sig > 0 then
-          local psig = processes[pid].sig
-          processes[pid].sig = nil
-          ok, ret = resume(processes[pid].coro, psig)
+          ok, ret = resume(proc.coro, sched.signals.event, table.unpack(sig))
+        elseif #proc.ipc_buffer > 0 then
+          local ipc = proc.ipc_buffer[1]
+          table.remove(proc.ipc_buffer, 1)
+          ok, ret = resume(proc.coro, sched.signals.ipc, table.unpack(ipc))
+        elseif proc.sig > 0 then
+          local psig = proc.sig
+          proc.sig = nil
+          ok, ret = resume(proc.coro, psig)
         else
-          ok, ret = resume(processes[pid].coro, sched.signals.resume)
+          ok, ret = resume(proc.coro, sched.signals.resume)
         end
         if not ok and ret then
-          processes[pid].dead = true
-          processes[pid].running = false
+          proc.dead = true
+          proc.running = false
           handleError(pid, ret)
         end
       end
