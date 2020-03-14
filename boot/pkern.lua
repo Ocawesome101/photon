@@ -1,6 +1,6 @@
 -- P-Kernel, the heart of Proton --
 
-local _BUILD_ID = "fb75463"
+local _BUILD_ID = "b733621"
 local _KERNEL_NAME = "Proton"
 function os.build()
   return _BUILD_ID
@@ -16,6 +16,7 @@ local bootfs = component.proxy(addr)
 
 -- Logging --
 local logger = {}
+local ps = computer.pullSignal
 do
   local invoke = component.invoke
   logger.log = function()end
@@ -43,7 +44,7 @@ end
 local function freeze(...)
   logger.log("ERR:", ...)
   while true do
-    computer.pullSignal()
+    ps()
   end
 end
 
@@ -124,7 +125,9 @@ do
   local signals = {}
   local function autosleep()
     local sig = {ps(sleeptineout)}
-    signals[#signals + 1] = sig
+    if #sig > 0 then
+      signals[#signals + 1] = sig
+    end
   end
   
   local function autokill()
@@ -135,9 +138,13 @@ do
         process.dead = true
       end
     end
+    for pid, _ in pairs(dead) do
+      processes[pid] = nil
+    end
   end
   
   local function handleError(pid, err)
+    logger.log("Handling", err, pid)
     local handler = processes[pid].handler
     if not handler or type(handler) ~= "function" then
       if not processes[processes[pid].parent] then
@@ -158,6 +165,9 @@ do
   }
 
   function sched.spawn(func, name, handler)
+    checkArg(1, func, "function")
+    checkArg(2, name, "string")
+    checkArg(2, handler, "function", "nil")
     local ps = {
       coro = create(func),
       name = name,
@@ -210,10 +220,10 @@ do
   function sched.start()
     sched.start = nil
     while #processes > 0 do
-      for _, process in pairs(processes) do
-        process.runtime = uptime() - process.starttime
-        process.started = true
-        process.running = true
+      for pid, _ in pairs(processes) do
+        processes[pid].runtime = uptime() - processes[pid].starttime
+        processes[pid].started = true
+        processes[pid].running = true
         local sig = {}
         if #signals > 0 then
           sig = signals[1]
@@ -221,28 +231,32 @@ do
         end
         local ok, ret
         if #sig > 0 then
-          ok, ret = resume(process.coro, sched.signals.event, table.unpack(sig))
-        elseif #process.ipc_buffer > 0 then
-          local ipc = process.ipc_buffer[1]
-          table.remove(process.ipc_buffer, 1)
-          ok, ret = resume(process.coro, sched.signals.ipc, table.unpack(ipc))
-        elseif process.sig > 0 then
-          local psig = process.sig
-          process.sig = nil
-          ok, ret = resume(process.coro, psig)
+          ok, ret = resume(processes[pid].coro, sched.signals.event, table.unpack(sig))
+        elseif #processes[pid].ipc_buffer > 0 then
+          local ipc = processes[pid].ipc_buffer[1]
+          table.remove(processes[pid].ipc_buffer, 1)
+          ok, ret = resume(processes[pid].coro, sched.signals.ipc, table.unpack(ipc))
+        elseif processes[pid].sig > 0 then
+          local psig = processes[pid].sig
+          processes[pid].sig = nil
+          ok, ret = resume(processes[pid].coro, psig)
+        else
+          ok, ret = resume(processes[pid].coro, sched.signals.resume)
         end
         if not ok and ret then
-          process.dead = true
-          handleError(process.pid, ret)
+          processes[pid].dead = true
+          processes[pid].running = false
+          handleError(pid, ret)
         end
       end
       autokill()
       autosleep()
     end
+    logger.log("All processes died")
   end
   
-  function computer.pullSignal(t)
-    yield(t)
+  function computer.pullSignal()
+    yield()
   end
   
   _G.sched = sched

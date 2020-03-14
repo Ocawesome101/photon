@@ -1,5 +1,6 @@
 -- Logging --
 local logger = {}
+local ps = computer.pullSignal
 do
   local invoke = component.invoke
   logger.log = function()end
@@ -27,6 +28,6 @@ end
 local function freeze(...)
   logger.log("ERR:", ...)
   while true do
-    computer.pullSignal()
+    ps()
   end
 end

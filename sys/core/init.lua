@@ -49,6 +49,8 @@ if ok then
   end
 end
 
+local sched = sched or require("sched")
+
 for _, item in ipairs(init_config) do
   local ok, err = loadfile(item.file)
   if not ok then
