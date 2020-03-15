@@ -1,6 +1,9 @@
 -- io: file I/O --
 
 local fs = drivers.loadDriver("filesystem")
+local computer = computer
+
+local timeout = 5 -- The amount of time, in seconds, that a read operation is allowed to take.
 
 local buf = ""
 local stdio = {
@@ -27,7 +30,11 @@ local function create(mode, handle)
   checkArg(1, mode, "string")
   checkArg(2, handle, "userdata", "nil", "string", "table")
   if type(handle) == "string" then
-    handle = stdio
+    if handle == "-" then
+      handle = stdio
+    else
+      return false, "Invalid file " .. handle
+    end
   end
   handle = handle or stdio
   
@@ -48,9 +55,12 @@ local function create(mode, handle)
     end
     if a == "*a" or a == "a" then
       local d = ""
+      local start = computer.uptime()
       repeat
         local c = self.stream.read(math.huge)
-        coroutine.yield() -- Prevent large files blocking the scheduler
+        if computer.uptime() - start >= start + timeout then -- We've exceeded the timeout!
+          error("Timeout exceeded")
+        end
         d = d .. (c or "")
       until not c
       return d

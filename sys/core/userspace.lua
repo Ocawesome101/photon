@@ -30,12 +30,16 @@ function _G.loadfile(file, mode, env)
   
   local handle, err = io.open(file, "r")
   if not handle then
-    return nil, err
+    return nil, "IO" .. err
   end
   local data = handle:read("a")
   handle:close()
   
-  return load(data, "=" .. file, mode, env)
+  local ok, err = load(data, "=" .. file, mode, env)
+  if not ok then
+    return nil, err
+  end
+  return ok
 end
 
 function package.loaded.computer.pullSignal()
@@ -54,8 +58,8 @@ if not ok then
 end
 
 local function userspaceError(err, lvl)
-  local trace = debug.traceback(err, lvl)
-  term.write("ERROR IN THREAD " .. sched.current() .. "\n")
+  local trace = debug.traceback(err, lvl) .. "\n"
+  term.write("ERROR IN THREAD " .. sched.current() .. ": " .. sched.info(sched.current()).name .. "\n")
   term.write(trace)
   sched.kill(sched.current())
 end

@@ -1,6 +1,6 @@
 -- P-Kernel, the heart of Proton --
 
-local _BUILD_ID = "1e7acaa"
+local _BUILD_ID = "7250c00"
 local _KERNEL_NAME = "Proton"
 function os.build()
   return _BUILD_ID
@@ -120,11 +120,11 @@ do
   local processes = {}
   local currentpid = 0
   local pid = 1
-  local sleeptimeout = _CONFIG.process_timeout or 0.5
+  local timeout = _CONFIG.process_timeout or 0.05
   
   local signals = {}
   local function autosleep()
-    local sig = {ps()}
+    local sig = {ps(timeout)}
     if #sig > 0 then
       signals[#signals + 1] = sig
     end
@@ -290,7 +290,7 @@ do
     end
     logger.log("All processes died")
   end
-
+  
   _G.sched = sched
 end
 
