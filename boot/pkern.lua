@@ -1,6 +1,6 @@
 -- P-Kernel, the heart of Proton --
 
-local _BUILD_ID = "dc58eda"
+local _BUILD_ID = "1e7acaa"
 local _KERNEL_NAME = "Proton"
 function os.build()
   return _BUILD_ID
@@ -213,11 +213,41 @@ do
         process.dead = true
       end
     end
-    autokill()
   end
   
   function sched.current()
     return currentpid
+  end
+  
+  function sched.parent(pid)
+    checkArg(1, pid, "number", "nil")
+    local pid = pid or currentpid
+    
+    if not processes[pid] then
+      return nil, "No such process"
+    end
+    
+    return processes[pid].parent
+  end
+  
+  function sched.processes()
+    local proc = {}
+    for pid, _ in pairs(processes) do
+      proc[#proc + 1] = pid
+    end
+    return proc
+  end
+  
+  function sched.info(pid)
+    checkArg(1, pid, "number", "nil")
+    local pid = pid or currentpid
+
+    if not processes[pid] then
+      return nil, "No such process"
+    end
+    
+    local proc = processes[pid]
+    return {name = proc.name, pid = proc.pid, parent = proc.parent, uptime = proc.runtime, start = proc.starttime, running = proc.running}
   end
   
   function sched.start()
@@ -231,26 +261,27 @@ do
 
       for pid, _ in pairs(processes) do
         currentpid = pid
-        processes[pid].runtime = uptime() - processes[pid].starttime
-        processes[pid].started = true
-        processes[pid].running = true
+        local proc = processes[pid]
+        proc.runtime = uptime() - proc.starttime
+        proc.started = true
+        proc.running = true
         local ok, ret
         if #sig > 0 then
-          ok, ret = resume(processes[pid].coro, sched.signals.event, table.unpack(sig))
-        elseif #processes[pid].ipc_buffer > 0 then
-          local ipc = processes[pid].ipc_buffer[1]
-          table.remove(processes[pid].ipc_buffer, 1)
-          ok, ret = resume(processes[pid].coro, sched.signals.ipc, table.unpack(ipc))
-        elseif processes[pid].sig > 0 then
-          local psig = processes[pid].sig
-          processes[pid].sig = nil
-          ok, ret = resume(processes[pid].coro, psig)
+          ok, ret = resume(proc.coro, sched.signals.event, table.unpack(sig))
+        elseif #proc.ipc_buffer > 0 then
+          local ipc = proc.ipc_buffer[1]
+          table.remove(proc.ipc_buffer, 1)
+          ok, ret = resume(proc.coro, sched.signals.ipc, table.unpack(ipc))
+        elseif proc.sig > 0 then
+          local psig = proc.sig
+          proc.sig = nil
+          ok, ret = resume(proc.coro, psig)
         else
-          ok, ret = resume(processes[pid].coro, sched.signals.resume)
+          ok, ret = resume(proc.coro, sched.signals.resume)
         end
         if not ok and ret then
-          processes[pid].dead = true
-          processes[pid].running = false
+          proc.dead = true
+          proc.running = false
           handleError(pid, ret)
         end
       end
@@ -262,6 +293,48 @@ do
 
   _G.sched = sched
 end
+
+
+-- Set up the userspace sandbox
+
+local userspace = {
+  _OSVERSION = string.format("%s build %s", os.uname(), os.build()),
+  assert = assert,
+  error = error,
+  getmetatable = getmetatable,
+  ipairs = ipairs,
+  load = load,
+  next = next,
+  pairs = pairs,
+  pcall = pcall,
+  rawequal = rawequal,
+  rawget = rawget,
+  rawlen = rawlen,
+  rawset = rawset,
+  select = select,
+  setmetatable = setmetatable,
+  tonumber = tonumber,
+  tostring = tostring,
+  type = type,
+  xpcall = xpcall,
+  checkArg = checkArg,
+  bit32 = setmetatable({}, {__index=bit32}),
+  debug = setmetatable({}, {__index=debug}),
+  math = setmetatable({}, {__index=math}),
+  os = setmetatable({}, {__index=os}),
+  string = setmetatable({}, {__index=string}),
+  table = setmetatable({}, {__index=table}),
+  drivers = setmetatable({}, {__index=drivers}),
+  sched = setmetatable({}, {__index=sched}),
+  computer = setmetatable({}, {__index=computer}),
+  unicode = setmetatable({}, {__index=unicode}),
+  component = setmetatable({}, {__index=component}),
+  coroutine = {
+    yield = coroutine.yield
+  }
+}
+
+userspace._G = userspace
 
 
 -- Launch init --
@@ -276,7 +349,7 @@ repeat
   data = data .. (chunk or "")
 until not chunk
 bootfs.close(handle)
-local ok, err = load(data, "=" .. _CONFIG.init, "t", _G)
+local ok, err = load(data, "=" .. _CONFIG.init, "t", userspace)
 if not ok then
   freeze(err)
 end

@@ -12,6 +12,26 @@ local mounts = {
   }
 }
 
+local function split(s, ...)
+  checkArg(1, s, "string")
+  local rw = {}
+  local _s = table.concat({...}, s)
+  for w in _s:gmatch("[^%" .. s .. "]+") do
+    rw[#rw + 1] = w
+  end
+  local i=1
+  setmetatable(rw, {__call = function()
+    i = i + 1
+    if rw[i - 1] then
+      return rw[i - 1]
+    else
+      return nil
+    end
+  end
+  })
+  return rw
+end
+
 local function cleanPath(p)
   checkArg(1, p, "string")
   local path = ""
@@ -23,6 +43,8 @@ local function cleanPath(p)
   end
   return path
 end
+
+fs.clean = cleanPath
 
 local function resolve(path) -- Resolve a path to a filesystem proxy
   checkArg(1, path, "string")
@@ -227,7 +249,7 @@ end
 
 function fs.canonical(path)
   checkArg(1, path, "string")
-  local segments = string.tokenize("/", path)
+  local segments = split("/", path)
   for i=1, #segments, 1 do
     if segments[i] == ".." then
       segments[i] = ""
@@ -239,14 +261,14 @@ end
 
 function fs.path(path)
   checkArg(1, path, "string")
-  local segments = string.tokenize("/", path)
+  local segments = split("/", path)
   
   return cleanPath(table.concat({table.unpack(segments, 1, #segments - 1)}, "/"))
 end
 
 function fs.name(path)
   checkArg(1, path, "string")
-  local segments = string.tokenize("/", path)
+  local segments = split("/", path)
 
   return segments[#segments]
 end

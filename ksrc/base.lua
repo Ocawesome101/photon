@@ -15,4 +15,5 @@ logger.log("Kernel revision:", _BUILD_ID)
 --#include "kmod/config.lua"
 --#include "kmod/drivers.lua"
 --#include "kmod/scheduler.lua"
+--#include "kmod/userspace.lua"
 --#include "kmod/init.lua"

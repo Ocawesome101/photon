@@ -18,6 +18,7 @@ local init_config = {
   {type = "script", name = "userspace", file = "/sys/core/userspace.lua"}
 }
 
+local fs = drivers.filesystem
 function _G.loadfile(file, mode, env, prefix)
   checkArg(1, file, "string")
   checkArg(2, mode, "string", "nil")

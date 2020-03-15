@@ -10,7 +10,7 @@ repeat
   data = data .. (chunk or "")
 until not chunk
 bootfs.close(handle)
-local ok, err = load(data, "=" .. _CONFIG.init, "t", _G)
+local ok, err = load(data, "=" .. _CONFIG.init, "t", userspace)
 if not ok then
   freeze(err)
 end

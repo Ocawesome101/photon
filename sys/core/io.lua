@@ -25,7 +25,7 @@ local stdio = {
 
 local function create(mode, handle)
   checkArg(1, mode, "string")
-  checkArg(2, handle, "userdata", "nil", "string")
+  checkArg(2, handle, "userdata", "nil", "string", "table")
   if type(handle) == "string" then
     handle = stdio
   end

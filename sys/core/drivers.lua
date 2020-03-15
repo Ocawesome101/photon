@@ -32,3 +32,5 @@ function drivers.unloadDriver(driver)
     return nil, "Driver not loaded"
   end
 end
+
+_G.component = nil

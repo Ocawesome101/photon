@@ -12,7 +12,6 @@ package.loaded = {
   ["string"] = string,
   ["math"] = math,
   ["bit32"] = bit32,
-  ["component"] = component,
   ["computer"] = computer,
   ["unicode"] = unicode,
   ["coroutine"] = coroutine,
