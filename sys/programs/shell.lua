@@ -18,7 +18,7 @@ local function printError(...)
 end
 
 while true do
-  term.write(shell.resolveVariables(os.getenv("PS1")))
+  term.write(os.getenv("PS1"))
   local cmd = term.read()
   if cmd ~= "\n" then
     local ok, err = pcall(function()return shell.execute(cmd)end)
