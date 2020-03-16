@@ -67,7 +67,7 @@ Copy the resulting script to `/boot` in your OpenComputers filesystem.
           - [ ] kill
           - [ ] lua
           - [X] power
-          - [ ] components
+          - [X] components
           - [ ] set
         - [ ] Aliases
         - [ ] ? Variables
