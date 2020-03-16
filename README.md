@@ -1,6 +1,6 @@
 # Proton
 
-Proton is a modular, lightweight microkernel for the OpenComputers Minecraft mod.
+Proton is a modular, lightweight hybrid kernel for the OpenComputers Minecraft mod.
 
 ## Building
 
