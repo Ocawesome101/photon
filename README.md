@@ -66,10 +66,11 @@ Copy the resulting script to `/boot` in your OpenComputers filesystem.
           - [ ] alias
           - [X] ps
           - [X] kill
-          - [ ] lua
+          - [X] lua
           - [X] power
           - [X] components
-          - [ ] set
+          - [X] set
+          - [X] unset
         - [ ] Aliases
         - [ ] ? Variables
         - [ ] TTYs
