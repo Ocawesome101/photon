@@ -52,7 +52,7 @@ end
 function term.setCursor(nx, ny)
   checkArg(1, nx, "number")
   checkArg(2, ny, "number")
-  if nx <= x and ny <= y then
+  if nx <= w and ny <= h then
     x, y = nx, ny
     return true
   end
@@ -138,13 +138,17 @@ local min = 32
 function term.read() -- it is ALWAYS advisable to use this function over io.read, as io.read returns characters and does not support deletion.
   local buffer = ""
   local startX, startY = term.getCursor()
-  local function redraw()
-    term.setCursor(startX, startY)
-    cursor = false
-    term.write((" "):rep(#buffer + 2)) -- The reasons this number was picked are reasons I will not explain here.
-    cursor = true
+  local function redraw(bk)
     term.setCursor(startX, startY)
     term.write(buffer)
+    if bk then
+      cursor = false
+      local _x, _y = term.getCursor()
+      term.write(" ")
+      cursor = true
+      term.setCursor(_x, _y)
+      cursor_update()
+    end
   end
   repeat
     redraw()
@@ -155,11 +159,11 @@ function term.read() -- it is ALWAYS advisable to use this function over io.read
       buffer = buffer .. char
     elseif char == bksp then
       buffer = buffer:sub(1, -2)
-    elseif char == rtn then
-      buffer = buffer .. "\n"
-      redraw()
+      redraw(true)
     end
   until char == rtn
+  buffer = buffer .. "\n"
+  redraw()
   return buffer
 end
 

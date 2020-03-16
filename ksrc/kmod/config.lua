@@ -1,5 +1,5 @@
 -- Load kernel configuration from /kernel.cfg --
-local _DEFAULT_CONFIG = {drivers = {"filesystem","logger","user_io","internet"},init="/sys/core/init.lua"}
+local _DEFAULT_CONFIG = {drivers = {"filesystem"},init="/sys/core/init.lua"}
 local _CONFIG = {}
 local handle = bootfs.open("/boot/kernel.cfg")
 if not handle then

@@ -17,8 +17,10 @@ local function printError(...)
   gpu.setForeground(oldForeground)
 end
 
+shell.setErrorHandler(printError)
+
 while true do
-  term.write(os.getenv("PS1"))
+  term.write(shell.prompt(os.getenv("PS1")))
   local cmd = term.read()
   if cmd ~= "\n" then
     local ok, err = pcall(function()return shell.execute(cmd)end)

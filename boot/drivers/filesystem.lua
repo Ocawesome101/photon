@@ -166,7 +166,19 @@ function fs.list(path)
   checkArg(1, path, "string")
   local path, proxy = resolve(path)
 
-  return proxy.list(path)
+  local files = proxy.list(path)
+  local i = 1
+  local mt = {
+    __call = function()
+      i = i + 1
+      if files[i - 1] then
+        return files[i - 1]
+      else
+        return nil
+      end
+    end
+  }
+  return setmetatable(files, mt)
 end
 
 function fs.remove(path)
