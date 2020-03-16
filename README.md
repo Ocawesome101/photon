@@ -29,7 +29,7 @@ Copy the resulting script to `/boot` in your OpenComputers filesystem.
         - [ ] Unmanaged
           - [ ] OpenFS
           - [ ] OpenUPT
-      - [ ] Graphics Card
+      - [X] Graphics Card
       - [ ] Networking
         - [ ] Internet Card
         - [ ] Wireless Card
@@ -70,14 +70,14 @@ Copy the resulting script to `/boot` in your OpenComputers filesystem.
           - [ ] components
           - [ ] set
         - [ ] Aliases
-        - [?] Variables
+        - [ ] ? Variables
         - [ ] TTYs
       - [ ] Modularity Desktop Environment
         - [ ] Base
           - [ ] Windows
             - [ ] Closable
             - [ ] Movable
-            - [?] Resizable
+            - [ ] ? Resizable
           - [ ] Menus
             - [ ] Right-click
             - [ ] Left-click
@@ -92,7 +92,7 @@ Copy the resulting script to `/boot` in your OpenComputers filesystem.
         - [ ] Remove
         - [ ] Search
   - [ ] Installer
-    - [?] PPM-compatible
+    - [ ] ? PPM-compatible
       - [ ] Generate installed-package list
     - [ ] Base system
     - [ ] Modules
