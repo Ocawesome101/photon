@@ -58,12 +58,13 @@ Copy the resulting script to `/boot` in your OpenComputers filesystem.
         - [ ] Commands
           - [X] ls
           - [X] cp
-          - [X] mv
+          - [ ] mv
+          - [X] cd
           - [X] pwd
           - [X] mkdir
           - [x] echo
           - [ ] lshw
-          - [ ] rm
+          - [X] rm
           - [ ] alias
           - [X] clear
           - [X] free
