@@ -35,7 +35,7 @@ local function serialize(tbl, indent)
     rtn = rtn .. ident .. "[" .. key .. "] = " .. val .. ",\n"
   end
 
-  rtn = rtn .. "}"
+  rtn = rtn .. ident:sub(1, -3) .. "}"
   return rtn
 end
 

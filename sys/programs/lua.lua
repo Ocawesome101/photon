@@ -3,6 +3,7 @@
 local shell = require("shell")
 local gpu = require("drivers").loadDriver("gpu")
 local term = require("term")
+local serialization = require("utils/serialization")
 
 local args, options = shell.parse(...)
 
@@ -49,7 +50,7 @@ while running do
     elseif not result[1] then
       print("nil")
     else
-      local status, returned = pcall(function() for i = 2, #result, 1 do print(type(result[i]) == "table" and table.serialize(result[i]) or result[i]) end end)
+      local status, returned = pcall(function() for i = 2, #result, 1 do print(type(result[i]) == "table" and serialization.serialize(result[i]) or result[i]) end end)
       if not status then
         print("error serializing result: " .. tostring(returned))
       end

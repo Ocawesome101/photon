@@ -3,7 +3,7 @@
 local shell = require("shell")
 local term = require("term")
 local fs = require("drivers").loadDriver("filesystem")
-local prompts = require("utils/prompt")
+local prompts = require("utils/prompts")
 
 local args, opts = shell.parse(...)
 
@@ -31,6 +31,7 @@ local function copy(file, dest)
     print(string.format("%s -> %s", file, dest))
   end
   if fs.isDirectory(file) then
+    fs.makeDirectory(dest)
     for o in fs.list(file) do
       copy(file .. "/" .. o, dest .. "/" .. o)
     end
@@ -44,8 +45,10 @@ local destination = shell.resolve(args[2])
 
 if fs.isDirectory(source) then
   if recurse then
-    copy(source, dest)
+    copy(source, destination)
   else
     error("-r not specified; not copying " .. args[1], 0)
   end
 end
+
+copy(source, destination)
