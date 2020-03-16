@@ -5,11 +5,21 @@ local sched = require("sched")
 local env = {}
 
 function os.setenv(varname, value)
+  checkArg(1, varname, "string")
   env[varname] = value
 end
 
 function os.getenv(varname)
-  return env[varname]
+  checkArg(1, varname, "string", "nil")
+  if not varname then
+    local r = {}
+    for k,v in pairs(env) do
+      r[#r+1] = k
+    end
+    return r
+  else
+    return env[varname]
+  end
 end
 
 function os.difftime(t1, t2)
@@ -18,7 +28,7 @@ end
 
 function os.exit(code)
   if code and type(code) == "number" then
-    sched.ipc_send(sched.parent(), code)
+    sched.send_ipc(sched.parent(), code)
   end
   sched.kill(sched.current())
 end

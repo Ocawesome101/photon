@@ -26,6 +26,7 @@ os.setenv("PWD", "/users")
 os.setenv("PATH", "/sys/programs")
 os.setenv("PS1", "\\u@\\h: \\w\\$ ")
 os.setenv("USER", "root")
+os.setenv("HOME", "/users")
 
 function shell.resolve(path)
   checkArg(1, path, "string")
@@ -108,7 +109,8 @@ function shell.execute(cmd, ...)
     error(err)
   end
   
-  return sched.spawn(function()return ok(table.unpack(tokens))end, absolute, errHandler)
+  return ok(table.unpack(tokens))
+  --return sched.spawn(function()return ok(table.unpack(tokens))end, absolute, errHandler)
 end
 
 function shell.parse(...)

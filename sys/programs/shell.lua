@@ -10,10 +10,10 @@ local gpu = require("drivers").loadDriver("gpu")
 term.clear()
 print("Welcome to", _OSVERSION)
 
-local function printError(...)
+local function printError(err, lvl)
   local oldForeground = gpu.getForeground()
   gpu.setForeground(0xFF0000)
-  print(...)
+  print(debug.traceback(err, lvl))
   gpu.setForeground(oldForeground)
 end
 

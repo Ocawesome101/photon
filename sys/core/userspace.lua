@@ -13,6 +13,7 @@ if not term then error(err) end
 function _G.print(...)
   local args = {...}
   for i=1, #args, 1 do
+    args[i] = tostring(args[i])
     term.write(args[i])
     if i < #args then
       term.write(" ")
