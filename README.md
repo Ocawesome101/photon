@@ -57,10 +57,10 @@ Copy the resulting script to `/boot` in your OpenComputers filesystem.
       - [ ] Proton Shell
         - [ ] Commands
           - [X] ls
-          - [ ] cp
-          - [ ] mv
+          - [X] cp
+          - [X] mv
           - [X] pwd
-          - [ ] mkdir
+          - [X] mkdir
           - [x] echo
           - [ ] lshw
           - [ ] rm

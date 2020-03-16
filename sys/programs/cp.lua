@@ -12,7 +12,7 @@ local verbose = opts.v or opts.verbose or false
 local prompt = opts.i or opts.interactive or not (opts.n or opts.noclobber)
 
 if #args < 2 then
-  error("usage: cp [-rvi] FILE DEST")
+  error("usage: cp [-rvi] FILE DEST", 0)
 end
 
 local function copy(file, dest)
@@ -22,6 +22,9 @@ local function copy(file, dest)
       if not yn then
         return
       end
+    else
+      print("not overwriting " .. dest .. ": already exists")
+      return
     end
   end
   if verbose then
@@ -43,6 +46,6 @@ if fs.isDirectory(source) then
   if recurse then
     copy(source, dest)
   else
-    error("-r not specified; not copying " .. args[1])
+    error("-r not specified; not copying " .. args[1], 0)
   end
 end

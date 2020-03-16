@@ -10,5 +10,5 @@ if opts.r then
 elseif opts.s then
   computer.shutdown(false)
 else
-  error("Usage: power -s|-r")
+  error("usage: power -s|-r", 0)
 end
