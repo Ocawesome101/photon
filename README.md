@@ -64,7 +64,8 @@ Copy the resulting script to `/boot` in your OpenComputers filesystem.
           - [ ] lshw
           - [ ] rm
           - [ ] alias
-          - [ ] kill
+          - [X] ps
+          - [X] kill
           - [ ] lua
           - [X] power
           - [X] components
