@@ -51,7 +51,7 @@ Copy the resulting script to `/boot` in your OpenComputers filesystem.
         - [X] drivers
         - [ ] utils
           - [X] splitter
-          - [ ] serialization
+          - [X] serialization
           - [ ] notes
     - [ ] Interfaces
       - [ ] Proton Shell
@@ -60,10 +60,13 @@ Copy the resulting script to `/boot` in your OpenComputers filesystem.
           - [ ] cp
           - [ ] mv
           - [X] pwd
+          - [ ] mkdir
           - [x] echo
           - [ ] lshw
           - [ ] rm
           - [ ] alias
+          - [X] clear
+          - [X] free
           - [X] ps
           - [X] kill
           - [X] lua

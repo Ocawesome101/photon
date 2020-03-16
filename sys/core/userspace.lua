@@ -47,8 +47,22 @@ function package.loaded.computer.pullSignal()
   return coroutine.yield()
 end
 
+local shell = "/sys/programs/shell.lua"
+local handle = io.open("/sys/config/shell.cfg", "r")
+if handle then
+  local data = handle:read("a")
+  handle:close()
+  local ok, err = load("return " .. data, "=/sys/config/shell.cfg", "t", {})
+  if ok then
+    local s, r = pcall(ok)
+    if s then
+      shell = (type(r) == "string" and r) or r.shell or shell
+    end
+  end
+end
+
 logger.log("Starting shell")
-local ok, err = loadfile("/sys/programs/shell.lua")
+local ok, err = loadfile((fs.exists(shell) and shell) or "/sys/programs/shell.lua")
 if not ok then
   logger.prefix = "SHELL ERROR:"
   logger.log(err)

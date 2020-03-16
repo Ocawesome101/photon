@@ -1,6 +1,6 @@
 -- P-Kernel, the heart of Proton --
 
-local _BUILD_ID = "cc2e592"
+local _BUILD_ID = "7fc5127"
 local _KERNEL_NAME = "Proton"
 function os.build()
   return _BUILD_ID
@@ -288,7 +288,10 @@ do
       autokill()
       autosleep()
     end
-    logger.log("All processes died")
+    logger.log("PANIC: INIT PROCESS DIED")
+    for line in debug.traceback():gsub("\t", "    "):gmatch("[^\n]+") do
+      logger.log(line)
+    end
   end
   
   _G.sched = sched

@@ -7,8 +7,17 @@ local term = require("term")
 local shell = require("shell")
 local gpu = require("drivers").loadDriver("gpu")
 
+local logo =
+[[Welcome to....        __            
+    ____  _________  / /_____  ____ 
+   / __ \/ ___/ __ \/ __/ __ \/ __ \
+  / /_/ / /  / /_/ / /_/ /_/ / / / /
+ / .___/_/   \____/\__/\____/_/ /_/ 
+/_/
+]]
+
 term.clear()
-print("Welcome to", _OSVERSION)
+print(logo)
 
 local function printError(err, lvl)
   local oldForeground = gpu.getForeground()

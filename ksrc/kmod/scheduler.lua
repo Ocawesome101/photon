@@ -177,7 +177,10 @@ do
       autokill()
       autosleep()
     end
-    logger.log("All processes died")
+    logger.log("PANIC: INIT PROCESS DIED")
+    for line in debug.traceback():gsub("\t", "    "):gmatch("[^\n]+") do
+      logger.log(line)
+    end
   end
   
   _G.sched = sched

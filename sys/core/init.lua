@@ -42,7 +42,7 @@ function _G.loadfile(file, mode, env, prefix)
   return load(prefix .. data, "=" .. file, mode, env)
 end
 
-local ok, err = loadfile("/sys/init.cfg", "t", {}, "return ")
+local ok, err = loadfile("/sys/config/init.cfg", "t", {}, "return ")
 if ok then
   local s, r = pcall(ok)
   if s then
