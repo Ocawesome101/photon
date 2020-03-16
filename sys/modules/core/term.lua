@@ -54,6 +54,7 @@ function term.setCursor(nx, ny)
   checkArg(2, ny, "number")
   if nx <= w and ny <= h then
     x, y = nx, ny
+    cursor_update()
     return true
   end
   return false
@@ -147,7 +148,6 @@ function term.read() -- it is ALWAYS advisable to use this function over io.read
       term.write(" ")
       cursor = true
       term.setCursor(_x, _y)
-      cursor_update()
     end
   end
   repeat
