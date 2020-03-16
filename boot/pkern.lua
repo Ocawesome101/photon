@@ -1,6 +1,6 @@
 -- P-Kernel, the heart of Proton --
 
-local _BUILD_ID = "04892fd"
+local _BUILD_ID = "cc2e592"
 local _KERNEL_NAME = "Proton"
 function os.build()
   return _BUILD_ID
@@ -52,7 +52,7 @@ logger.log("Initializing")
 logger.log("Kernel revision:", _BUILD_ID)
 
 -- Load kernel configuration from /kernel.cfg --
-local _DEFAULT_CONFIG = {drivers = {"filesystem","logger","user_io","internet"},init="/sys/core/init.lua"}
+local _DEFAULT_CONFIG = {drivers = {"filesystem"},init="/sys/core/init.lua"}
 local _CONFIG = {}
 local handle = bootfs.open("/boot/kernel.cfg")
 if not handle then

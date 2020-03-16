@@ -4,6 +4,7 @@ local shell = require("shell")
 local fs = require("drivers").loadDriver("filesystem")
 local gpu = require("drivers").loadDriver("gpu")
 local text = require("text")
+local term = require("term")
 
 local args, opts = shell.parse(...)
 
@@ -23,7 +24,7 @@ local function coloredPrint(col, str)
     return
   end
   if color then gpu.setForeground(col) end
-  print(str)
+  term.write(str .. "  ")
 end
 
 local old = gpu.getForeground()
@@ -33,20 +34,25 @@ for n, dir in ipairs(args) do
   if prefix then
     print(dir .. ":")
   end
-  local files = fs.list(dir)
-  local len = text.longest(files)
+  local files = fs.list(full)
+  local len = text.longest(files) + 2
+  if all then
+    coloredPrint(dirColor, ".")
+    coloredPrint(dirColor, "..")
+  end
   for file in files do
     local ffile = fs.canonical(full .. "/" .. file)
     local isDir = fs.isDirectory(ffile)
-    local pfile = text.padRight(file, len)
     if isDir then
-      coloredPrint(dirColor, pfile)
+      coloredPrint(dirColor, file)
     elseif file:sub(-4) == ".lua" then
-      coloredPrint(scriptColor, pfile)
+      coloredPrint(scriptColor, file)
     else
-      coloredPrint(fileColor, pfile)
+      coloredPrint(fileColor, file)
     end
   end
+  gpu.setForeground(old)
+  term.write("\n")
 end
 
 gpu.setForeground(old)
