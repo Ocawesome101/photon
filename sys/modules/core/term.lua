@@ -133,6 +133,7 @@ end
 
 local bksp = string.char(8)
 local rtn = string.char(13)
+local ctrlc = string.char(237)
 local max = 127
 local min = 32
 

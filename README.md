@@ -53,6 +53,7 @@ Copy the resulting script to `/boot` in your OpenComputers filesystem.
           - [X] splitter
           - [X] serialization
           - [ ] notes
+        - [ ] tui
     - [ ] Interfaces
       - [ ] Proton Shell
         - [ ] Commands
@@ -60,6 +61,7 @@ Copy the resulting script to `/boot` in your OpenComputers filesystem.
           - [X] cp
           - [ ] mv
           - [X] cd
+          - [ ] cat
           - [X] pwd
           - [X] mkdir
           - [x] echo

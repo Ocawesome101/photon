@@ -20,5 +20,11 @@ while true do
   local sig, e, _, id, code = computer.pullSignal()
   if e == "key_down" and pcio then -- Keyboard input can be disabled
     io.write(unicode.char(id))
+  elseif e == "interrupt" then
+    io.write("^C")
+    io.write(string.char(238))
+  elseif e == "exit" then
+    io.write("^D")
+    io.write(string.char(232))
   end
 end
