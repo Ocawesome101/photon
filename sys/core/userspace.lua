@@ -31,7 +31,7 @@ function _G.loadfile(file, mode, env)
   
   local handle, err = io.open(file, "r")
   if not handle then
-    return nil, "IO" .. err
+    return nil, err
   end
   local data = handle:read("a")
   handle:close()

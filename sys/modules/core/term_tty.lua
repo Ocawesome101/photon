@@ -1,17 +1,10 @@
 -- mostly OpenOS-compatible term API. --
 
-local gpu, err = require("drivers").loadDriver("gpu")
-if not gpu then
-  error(err)
-end
+local tty = require("tty")
 
 local term = {}
 
-local x, y = 1, 1
-local w, h = gpu.maxResolution()
-
-local cursor = true
-local cursorChar = require("unicode").char(0x258f)
+local w, h = tty.maxResolution()
 
 local function cursor_update()
 --[[  local cx = x
@@ -24,70 +17,58 @@ local function cursor_update()
   gpu.set(cx, y, char)
   gpu.setForeground(f)
   gpu.setBackground(b)]]
-  if cursor then
-    gpu.set(x, y, cursorChar)
-  else
-    gpu.set(x, y, " ")
-  end
+  tty.__update_cursor()
 end
 
 local function scroll()
-  gpu.copy(1, 1, w, h, 0, -1)
-  gpu.fill(1, h, w, 1, " ")
+  tty.scroll()
 end
 
 local function newline()
-  local old = cursor
-  cursor = false
+  local old = tty.getCursorBlink()
+  tty.setCursorBlink(true)
   cursor_update()
-  cursor = old
+  tty.setCursorBlink(old)
+  cursor_update()
+  local x, y = tty.getCursor()
   if y == h then
-    scroll()
+    tty.scroll()
+    tty.setCursor(1, y)
   else
-    y = y + 1
+    tty.setCursor(1, y + 1)
   end
-  x = 1
 end
 
 function term.setCursor(nx, ny)
   checkArg(1, nx, "number")
   checkArg(2, ny, "number")
-  if nx <= w and ny <= h then
-    x, y = nx, ny
-    cursor_update()
-    return true
-  end
-  return false
+  return tty.setCursor(nx, ny)
 end
 
 function term.getCursor()
-  return x, y
+  return tty.getCursor()
 end
 
 function term.setCursorBlink(bool)
   checkArg(1, bool, "boolean")
-  cursor = bool
+  tty.setCursorBlink(bool)
 end
 
 function term.getCursorBlink()
-  return cursor
+  return tty.getCursorBlink()
 end
 
 function term.setCursorChar(char)
   checkArg(1, char, "string")
-  char = char:sub(1,1)
-  if #char == 1 then
-    cursorChar = char
-  end
+  return tty.setCursorChar(char)
 end
 
 function term.getCursorChar()
-  return cursorChar
+  return tty.getCursorChar()
 end
 
 function term.clear()
-  gpu.fill(1, 1, w, h, " ")
-  term.setCursor(1, 1)
+  tty.clear()
 end
 
 function term.write(str, wrap)
@@ -112,6 +93,7 @@ function term.write(str, wrap)
   end
   for i=1, #words, 1 do
     local word = words[i]
+    local x, y = tty.getCursor()
     if x + #word + 1 > w then
       newline()
     end
@@ -122,9 +104,10 @@ function term.write(str, wrap)
         if x + 1 > w then
           newline()
         end
-        gpu.set(x, y, char)
+        tty.set(x, y, char)
         x = x + 1
       end
+      tty.setCursor(x, y)
     end
   end
   cursor = old
@@ -133,47 +116,37 @@ end
 
 local bksp = string.char(8)
 local rtn = string.char(13)
-local up = string.char(200)
-local down = string.char(208)
+local ctrlc = string.char(237)
 local max = 127
 local min = 32
 
-function term.read(hist) -- it is ALWAYS advisable to use this function over io.read, as io.read returns characters and does not support deletion.
+function term.read() -- it is ALWAYS advisable to use this function over io.read, as io.read returns characters and does not support deletion.
   local buffer = ""
   local startX, startY = term.getCursor()
-  local hist = hist or {}
-  local hpos = #hist + 1
+  local startTTY = tty.getTTY()
   local function redraw(bk)
     term.setCursor(startX, startY)
     term.write(buffer)
     if bk then
-      cursor = false
+      tty.setCursorBlink(false)
       local _x, _y = term.getCursor()
       term.write(" ")
-      cursor = true
+      tty.setCursorBlink(true)
       term.setCursor(_x, _y)
     end
   end
   repeat
-    redraw()
     coroutine.yield()
-    local char = (io.read(1) or string.char(1))
-    local byte = (string.byte(char) or 1)
-    if byte >= min and byte <= max then
-      buffer = buffer .. char
-    elseif char == bksp then
-      buffer = buffer:sub(1, -2)
-      redraw(true)
-    elseif char == up then
-      if hpos > 1 then
-        hpos = hpos - 1
+    if tty.getTTY() == startTTY then
+      redraw()
+      local char = (io.read(1) or string.char(1))
+      local byte = (string.byte(char) or 1)
+      if byte >= min and byte <= max then
+        buffer = buffer .. char
+      elseif char == bksp then
+        buffer = buffer:sub(1, -2)
+        redraw(true)
       end
-      buffer = (hist[hpos] or "")
-    elseif char == down then
-      if hpos < #hist then
-        hpos = hpos + 1
-      end
-      buffer = (hist[hpos] or "")
     end
   until char == rtn
   buffer = buffer .. "\n"
@@ -182,11 +155,11 @@ function term.read(hist) -- it is ALWAYS advisable to use this function over io.
 end
 
 function term.getViewport()
-  return gpu.getViewport()
+  return tty.maxResolution()
 end
 
 function term.isAvailable()
-  return gpu.isAvailable()
+  return tty.isAvailable()
 end
 
 return term

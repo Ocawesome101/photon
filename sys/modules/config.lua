@@ -24,11 +24,19 @@ function config.loadWithDefaults(file, default)
   local loaded = config.load(file)
   if not loaded then return default end
 
-  for k,v in pairs(default) do
-    if not loaded[k] then
-      loaded[k] = v
+  local function applyDefaults(d, t)
+    for k,v in pairs(d) do
+      if not t[k] then
+        t[k] = v
+      end
+      if type(v) == "table" then
+        applyDefaults(v, t[k])
+      end
     end
+    return t
   end
+
+  loaded = applyDefaults(default, loaded)
 
   return loaded
 end

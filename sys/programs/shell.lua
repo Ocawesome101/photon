@@ -6,6 +6,8 @@ local computer = require("computer")
 local term = require("term")
 local shell = require("shell")
 local gpu = require("drivers").loadDriver("gpu")
+local tty = require("tty")
+local running_tty = tty.getTTY()
 
 local logo =
 [[Welcome to....        __            
@@ -28,10 +30,15 @@ end
 
 shell.setErrorHandler(printError)
 
+local history = {}
 while true do
+  if #history == 16 then
+    table.remove(history, 1)
+  end
   term.write(shell.prompt(os.getenv("PS1")))
-  local cmd = term.read()
+  local cmd = term.read(history)
   if cmd ~= "\n" then
+    table.insert(history, cmd)
     local ok, err = pcall(function()return shell.execute(cmd)end)
     if not ok and err then
       printError(err)
