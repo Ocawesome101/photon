@@ -12,18 +12,22 @@ local verbose = opts.v or opts.verbose or false
 local prompt = opts.i or opts.interactive or not (opts.n or opts.noclobber)
 
 if #args < 2 then
-  error("usage: cp [-rvi] FILE DEST", 0)
+  error("usage: cp [-rvin] FILE DEST", 0)
 end
 
 local function copy(file, dest)
-  if fs.exists(dest) then
+  local _dest = dest
+  if fs.isDirectory(dest) then
+    _dest = dest .. "/" .. file
+  end
+  if fs.exists(_dest) then
     if prompt then
-      local yn = prompts.yesno("overwrite " .. dest .. "?", "y")
+      local yn = prompts.yesno("overwrite " .. _dest .. "?", "y")
       if not yn then
         return
       end
     else
-      print("not overwriting " .. dest .. ": already exists")
+      print("not overwriting " .. _dest .. ": already exists")
       return
     end
   end

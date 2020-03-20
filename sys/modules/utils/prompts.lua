@@ -11,9 +11,9 @@ function p.yesno(prompt, default)
 
   local r = false
   repeat
-    io.write(string.format("%s [%s/%s]: ", (default == "Y" and default) or "y", (default == "N" and default) or "n"))
+    io.write(string.format("%s [%s/%s]: ", prompt, (default == "Y" and default) or "y", (default == "N" and default) or "n"))
     local yn = io.read()
-  until ans == "y\n" or ans == "n\n" or ans == "\n"
+  until ans == "y" or ans == "n"
 
   return (#ans == 2 and ans == "y") or default == "Y"
 end
