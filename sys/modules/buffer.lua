@@ -90,7 +90,7 @@ function buffer.new(width, height)
     end
     local function setChar(x, y, c, f, b)
       if not new.buf[y] or not new.buf[y][x] then
-        return false, "index out of bounds"
+        return false, "index " .. x .. "*" .. y .. "out of bounds"
       end
       new.buf[y][x][1] = c
       if f then
@@ -103,35 +103,36 @@ function buffer.new(width, height)
     end
     local function getChar(x, y)
       if not new.buf[y] or not new.buf[y][x] then
-        return false, "index out of bounds"
+        return false, "index " .. x .. "*" .. y .. " out of bounds"
       end
       return new.buf[y][x]
     end
-    function new:set(x, y, s, f, b)
-      checkArg(1, x, "number")
-      checkArg(2, y, "number")
+    function new:set(_x, _y, s, f, b)
+      checkArg(1, _x, "number")
+      checkArg(2, _y, "number")
       checkArg(3, s, "string")
       checkArg(4, f, "number", "nil")
       checkArg(5, b, "number", "nil")
-      if x > self.w or y > self.h then
+      if _x > self.w or _y > self.h then
         return false, "index out of bounds"
       end
-      local cx = x
+      local cx = _x
       for char in s:gmatch(".") do
-        setChar(cx, y, char, f, b)
+        setChar(cx, _y, char, f, b)
+        cx = cx + 1
       end
       return true
     end
-    function new:fill(x, y, w, h, c, f, b)
+    function new:fill(x, y, _w, _h, c, f, b)
       checkArg(1, x, "number")
       checkArg(2, y, "number")
-      checkArg(3, w, "number")
-      checkArg(4, h, "number")
+      checkArg(3, _w, "number")
+      checkArg(4, _h, "number")
       checkArg(5, c, "string")
       checkArg(6, f, "number", "nil")
       checkArg(7, b, "number", "nil")
-      for _x=x, x+w, 1 do
-        for _y=y, y+h, 1 do
+      for _x=x, x+_w, 1 do
+        for _y=y, y+_h, 1 do
           setChar(_x, _y, _c, f, b)
         end
       end
@@ -150,16 +151,21 @@ function buffer.new(width, height)
       return true
     end
     function new:draw()
-      for y=1, self.h, 1 do
-        for x=1, self.w, 1 do
-          local char = getChar(_x, _y)
+      for _y=1, self.h, 1 do
+        for _x=1, self.w, 1 do
+          local char, err = getChar(_x, _y)
           if char then
             gpu.setForeground(char[2])
             gpu.setBackground(char[3])
-            gpu.set(_x, _y, char[1])
+            gpu.set(_x, _y, (char[1] or " "))
+          else
+            print(err)
           end
         end
       end
+    end
+    function new:width()
+      return self.w
     end
   end
   return new

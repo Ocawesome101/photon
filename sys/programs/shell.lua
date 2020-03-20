@@ -35,6 +35,8 @@ while true do
   if #history == 16 then
     table.remove(history, 1)
   end
+  gpu.setBackground(0x000000)
+  gpu.setForeground(0xFFFFFF)
   term.write(shell.prompt(os.getenv("PS1")))
   local cmd = term.read(history)
   if cmd ~= "\n" then

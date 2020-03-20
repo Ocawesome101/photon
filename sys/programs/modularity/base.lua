@@ -3,6 +3,7 @@
 local config = require("config")
 local buffer = require("buffer")
 local unicode = require("unicode")
+local sched = require("sched")
 
 print("Loading Modularity configuration")
 local cfg = {
@@ -25,16 +26,12 @@ local slogan  = "Loading..."
 
 local root = buffer.new(80, 25)
 
-for k,v in pairs(root) do
-  print(k)
-end
-
 root:fill(1, 1, 80, 25, " ", nil, cfg.background)
-root:fill(20, 5, 30, 10, " ", nil, 0xAAAAAA)
-root:set(34, 6, logotop, 0x000000, 0xAAAAAA)
-root:set(34, 7, logomid, 0x000000, 0xAAAAAA)
-root:set(34, 8, logobot, 0x000000, 0xAAAAAA)
-root:set(40, 11, slogan, 0x000000, 0xAAAAAA)
+root:fill(25, 5, 30, 10, " ", nil, 0xCCCCCC)
+root:set(29, 6, logotop, 0x000000, 0xCCCCCC)
+root:set(29, 7, logomid, 0x000000, 0xCCCCCC)
+root:set(29, 8, logobot, 0x000000, 0xCCCCCC)
+root:set(35, 11, slogan, 0x000000, 0xCCCCCC)
 root:draw()
 
 local windowBuffers = {}
@@ -93,11 +90,11 @@ function modwm.raise(id)
 end
 
 local function makeTitlebar(width, title)
-  return string,format("%s%sX", title, (" "):rep(width - #title - 1))
+  return string,format("%s%sX", tit)le, (" "):rep(width - #title - 1)
 end
 
 function modwm.redraw()
-  root.fill(1, 1, 80, 25, " ", nil, cfg.background)
+  root:fill(1, 1, 80, 25, " ", nil, cfg.background)
   local windows = {}
   for _, d in ipairs(windowBuffers) do -- organize windows so we can draw them in the correct order
     windows[d.layer] = {x = d.x, y = d.y, w = d.canvas:width(), title = d.title, canvas = d.canvas}
@@ -112,9 +109,9 @@ end
 
 package.loaded.modwm = modwm
 
-local ok, err = loadfile("/sys/programs/modularity/click_listener.lua")
+local ok, err = loadfile("/sys/programs/modularity/modwm.lua")
 if not ok then
   error("Failed to load click_listener: " .. err)
 end
 
-local ok = sched.spawn(ok, "/sys/programs/modularity/click_listener.lua")
+local ok = sched.spawn(ok, "modwm")
