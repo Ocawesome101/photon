@@ -30,6 +30,10 @@ local old = gpu.getForeground()
 
 for n, dir in ipairs(args) do
   local full = shell.resolve(dir)
+  if not fs.exists(full) then
+    io.stderr:write(dir .. ": no such file or directory\n")
+    return 1
+  end
   if prefix then
     print(dir .. ":")
   end
