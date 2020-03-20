@@ -1,6 +1,7 @@
 -- io: file I/O --
 
 local fs = require("drivers").loadDriver("filesystem")
+local gpu = require("drivers").loadDriver("gpu")
 local computer = require("computer")
 local term = require("term")
 
@@ -13,9 +14,17 @@ local stdio = {
     local read = term.read():sub(1, a)
     return read or nil
   end,
-  write = function(v)
+  write = function(v, iserr)
     checkArg(1, v, "string")
+    local old
+    if iserr then
+      old = gpu.getForeground()
+      gpu.setForeground(0xFF0000)
+    end
     term.write(v)
+    if iserr then
+      gpu.setForeground(old)
+    end
   end,
   seek = function()
     return 1
@@ -25,9 +34,10 @@ local stdio = {
   end
 }
 
-local function create(mode, handle)
+local function create(mode, handle, berr)
   checkArg(1, mode, "string")
   checkArg(2, handle, "userdata", "nil", "string", "table")
+  checkArg(3, berr, "boolean", "nil")
   if type(handle) == "string" then
     if handle == "-" then
       handle = stdio
@@ -40,7 +50,8 @@ local function create(mode, handle)
   local file = {
     stream = handle,
     mode = {},
-    tty = false
+    tty = false,
+    isstderr = berr
   }
   
   for m in mode:gmatch(".") do
@@ -111,7 +122,7 @@ local function create(mode, handle)
     if not self.mode.w then
       return nil, "Write mode was not enabled on this stream"
     end
-    return self.stream.write(val)
+    return self.stream.write(val, self.isstderr)
   end
   
   function file:flush() -- compatibility
@@ -139,7 +150,7 @@ _G.io = {}
 
 io.stdin = create("r")
 io.stdout = create("w")
-io.stderr = create("w")
+io.stderr = create("w", nil, true)
 
 function io.output(file)
   checkArg(1, file, "string", "table", "userdata", "nil")

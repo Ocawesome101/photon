@@ -21,14 +21,7 @@ local logo =
 term.clear()
 print(logo)
 
-local function printError(err, lvl)
-  local oldForeground = gpu.getForeground()
-  gpu.setForeground(0xFF0000)
-  print(debug.traceback(err, lvl))
-  gpu.setForeground(oldForeground)
-end
-
-shell.setErrorHandler(printError)
+shell.setErrorHandler(function(e,l)io.stderr:write(debug.traceback(e,l) .. "\n")end)
 
 local history = {}
 while true do
@@ -43,7 +36,7 @@ while true do
     table.insert(history, cmd)
     local ok, err = pcall(function()return shell.execute(cmd)end)
     if not ok and err then
-      printError(err)
+      io.stderr:write(debug.traceback(err) .. "\n")
     end
   end
   coroutine.yield()

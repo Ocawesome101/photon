@@ -28,9 +28,6 @@ while running do
   io.write("lua> ")
   gpu.setForeground(0xFFFFFF)
   local inp = io.read()
-  if #history > 16 then
-    history:remove(1)
-  end
   local exec, reason
   if inp:sub(1,1) == "=" then
     exec, reason = load("return " .. inp:sub(2), "=stdin", "t", LUA_ENV)
