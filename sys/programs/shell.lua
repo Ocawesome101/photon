@@ -37,8 +37,8 @@ while true do
   end
   gpu.setBackground(0x000000)
   gpu.setForeground(0xFFFFFF)
-  term.write(shell.prompt(os.getenv("PS1")))
-  local cmd = term.read(history)
+  io.write(shell.prompt(os.getenv("PS1")))
+  local cmd = term.read()
   if cmd ~= "\n" then
     table.insert(history, cmd)
     local ok, err = pcall(function()return shell.execute(cmd)end)

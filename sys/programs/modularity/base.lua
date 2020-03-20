@@ -90,7 +90,7 @@ function modwm.raise(id)
 end
 
 local function makeTitlebar(width, title)
-  return string,format("%s%sX", tit)le, (" "):rep(width - #title - 1)
+  return string,format("%s%sX", title, (" "):rep(width - #title - 1))
 end
 
 function modwm.redraw()

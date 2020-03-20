@@ -9,15 +9,13 @@ local args, options = shell.parse(...)
 
 local LUA_ENV = setmetatable({}, {__index=_G})
 
-LUA_ENV.os = setmetatable({}, {__index=os})
+LUA_ENV.os = setmetatable({}, {__index=_G.os})
 
 print(_VERSION, "Copyright (C) 1994-2017 Lua.org, PUC-Rio")
 gpu.setForeground(0xFFFF00)
 print("Enter a statement and press [enter] to evaluate it.")
 print("Prefix an expression with '=' to show its value.")
 print("Type 'os.exit()' to exit the interpreter.")
-
-local history = setmetatable({}, {__index=table})
 
 local running = true
 
@@ -27,10 +25,9 @@ end
 
 while running do
   gpu.setForeground(0x00FF00)
-  term.write("lua> ")
+  io.write("lua> ")
   gpu.setForeground(0xFFFFFF)
-  local inp = term.read(nil, history)
-  history:insert(inp)
+  local inp = io.read()
   if #history > 16 then
     history:remove(1)
   end

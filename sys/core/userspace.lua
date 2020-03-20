@@ -14,12 +14,12 @@ function _G.print(...)
   local args = {...}
   for i=1, #args, 1 do
     args[i] = tostring(args[i])
-    term.write(args[i])
+    io.write(args[i])
     if i < #args then
-      term.write(" ")
+      io.write(" ")
     end
   end
-  term.write("\n")
+  io.write("\n")
 end
 
 function _G.loadfile(file, mode, env)

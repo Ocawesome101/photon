@@ -156,24 +156,26 @@ function term.read(hist) -- it is ALWAYS advisable to use this function over io.
   end
   repeat
     redraw()
-    coroutine.yield()
-    local char = (io.read(1) or string.char(1))
-    local byte = (string.byte(char) or 1)
-    if byte >= min and byte <= max then
-      buffer = buffer .. char
-    elseif char == bksp then
-      buffer = buffer:sub(1, -2)
-      redraw(true)
-    elseif char == up then
-      if hpos > 1 then
-        hpos = hpos - 1
+    local sig, event, _, char, code = coroutine.yield()
+    if event == "key_down" then
+      char = string.char(char)
+      local byte = (string.byte(char) or 1)
+      if byte >= min and byte <= max then
+        buffer = buffer .. char
+      elseif char == bksp then
+        buffer = buffer:sub(1, -2)
+        redraw(true)
+      elseif char == up then
+        if hpos > 1 then
+          hpos = hpos - 1
+        end
+        buffer = (hist[hpos] or "")
+      elseif char == down then
+        if hpos < #hist then
+          hpos = hpos + 1
+        end
+        buffer = (hist[hpos] or "")
       end
-      buffer = (hist[hpos] or "")
-    elseif char == down then
-      if hpos < #hist then
-        hpos = hpos + 1
-      end
-      buffer = (hist[hpos] or "")
     end
   until char == rtn
   buffer = buffer .. "\n"

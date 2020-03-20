@@ -1,22 +1,21 @@
 -- io: file I/O --
 
-local fs = drivers.loadDriver("filesystem")
-local computer = computer
+local fs = require("drivers").loadDriver("filesystem")
+local computer = require("computer")
+local term = require("term")
 
 local timeout = 5 -- The amount of time, in seconds, that a read operation is allowed to take.
 
-local buf = ""
 local stdio = {
   read = function(a)
     checkArg(1, a, "number")
     local a = (a <= 2048 and a) or 2048
-    local read = buf:sub(1, a)
-    buf = buf:sub(a + 1)
+    local read = term.read():sub(1, a)
     return read or nil
   end,
   write = function(v)
     checkArg(1, v, "string")
-    buf = buf .. v
+    term.write(v)
   end,
   seek = function()
     return 1
@@ -40,11 +39,16 @@ local function create(mode, handle)
   
   local file = {
     stream = handle,
-    mode = {}
+    mode = {},
+    tty = false
   }
   
   for m in mode:gmatch(".") do
     file.mode[m] = true
+  end
+
+  if file.mode.t or handle == stdio then
+    file.tty = true
   end
   
   -- TODO: Possibly implement buffering
@@ -53,6 +57,7 @@ local function create(mode, handle)
     if not self.mode.r then
       return nil, "Read mode was not enabled on this stream"
     end
+    local a = a or "l"
     if a == "*a" or a == "a" then
       local d = ""
       local start = computer.uptime()
@@ -67,6 +72,9 @@ local function create(mode, handle)
     elseif a == "*l" or a == "l" or a == "L" or not a then
       local l = ""
       repeat
+        if self.tty then
+          return self.stream.read(math.huge) .. ((a == "L" and "\n") or "")
+        end
         local c = self.stream.read(1)
         l = l .. (((a ~= "L" and c ~= "\n") and c) or "")
         if c == "\n" or not c then
