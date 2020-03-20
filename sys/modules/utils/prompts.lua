@@ -1,7 +1,5 @@
 -- various little prompts --
 
-local term = require("term")
-
 local p = {}
 
 function p.yesno(prompt, default)
@@ -13,8 +11,8 @@ function p.yesno(prompt, default)
 
   local r = false
   repeat
-    term.write(string.format("%s [%s/%s]: ", (default == "Y" and default) or "y", (default == "N" and default) or "n"))
-    local yn = term.read()
+    io.write(string.format("%s [%s/%s]: ", (default == "Y" and default) or "y", (default == "N" and default) or "n"))
+    local yn = io.read()
   until ans == "y\n" or ans == "n\n" or ans == "\n"
 
   return (#ans == 2 and ans == "y") or default == "Y"

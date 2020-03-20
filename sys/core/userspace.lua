@@ -7,8 +7,6 @@ local drivers = require("drivers")
 local fs = drivers.loadDriver("filesystem")
 local component = require("component")
 local sched = require("sched")
-local term, err = require("term")
-if not term then error(err) end
 
 function _G.print(...)
   local args = {...}
@@ -74,8 +72,8 @@ end
 
 local function userspaceError(err, lvl)
   local trace = debug.traceback(err, lvl) .. "\n"
-  term.write("ERROR IN THREAD " .. sched.current() .. ": " .. sched.info(sched.current()).name .. "\n")
-  term.write(trace)
+  io.write("ERROR IN THREAD " .. sched.current() .. ": " .. sched.info(sched.current()).name .. "\n")
+  io.write(trace)
   sched.kill(sched.current())
 end
 

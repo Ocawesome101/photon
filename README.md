@@ -78,8 +78,9 @@ Copy the resulting script to `/boot` in your OpenComputers filesystem.
           - [X] set
           - [X] unset
         - [ ] Aliases
-        - [ ] ? Variables
-        - [ ] TTYs
+        - [X] Variables (ish)
+        - [ ] ? TTYs
+           Note: There was an attempt at TTYs. It failed.
       - [ ] Modularity Desktop Environment
         - [ ] Base
           - [ ] Windows

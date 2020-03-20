@@ -4,7 +4,6 @@ local shell = require("shell")
 local fs = require("drivers").loadDriver("filesystem")
 local gpu = require("drivers").loadDriver("gpu")
 local text = require("text")
-local term = require("term")
 
 local args, opts = shell.parse(...)
 
@@ -24,7 +23,7 @@ local function coloredPrint(col, str)
     return
   end
   if color then gpu.setForeground(col) end
-  term.write(str .. "  ")
+  io.write(str .. "  ")
 end
 
 local old = gpu.getForeground()
@@ -52,7 +51,7 @@ for n, dir in ipairs(args) do
     end
   end
   gpu.setForeground(old)
-  term.write("\n")
+  io.write("\n")
 end
 
 gpu.setForeground(old)
