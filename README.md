@@ -59,7 +59,7 @@ Copy the resulting script to `/boot` in your OpenComputers filesystem.
         - [ ] Commands
           - [X] ls
           - [X] cp
-          - [ ] mv
+          - [X] mv
           - [X] cd
           - [ ] cat
           - [X] pwd
