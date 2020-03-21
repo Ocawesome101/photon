@@ -21,10 +21,10 @@ while true do
         computer.pushSignal("interrupt")
       elseif pressed[d] then
         computer.pushSignal("exit")
-      elseif pressed[right] then
+--[[      elseif pressed[right] then
         tty.setTTY(tty.getTTY() + 1)
       elseif pressed[left] then
-        tty.setTTY(tty.getTTY() - 1)
+        tty.setTTY(tty.getTTY() - 1)]]
       end
     end
   elseif e == "key_up" then

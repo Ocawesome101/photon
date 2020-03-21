@@ -61,7 +61,7 @@ Copy the resulting script to `/boot` in your OpenComputers filesystem.
           - [X] cp
           - [X] mv
           - [X] cd
-          - [ ] cat
+          - [X] cat
           - [X] pwd
           - [X] mkdir
           - [x] echo
@@ -77,6 +77,9 @@ Copy the resulting script to `/boot` in your OpenComputers filesystem.
           - [X] components
           - [X] set
           - [X] unset
+          - [X] wc
+          - [ ] mount
+          - [ ] umount
         - [ ] Aliases
         - [X] Variables (ish)
         - [ ] ? TTYs

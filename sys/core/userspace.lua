@@ -77,4 +77,18 @@ local function userspaceError(err, lvl)
   sched.kill(sched.current())
 end
 
-sched.spawn(function()return ok(logger)end, "shell", userspaceError)
+local shellPID
+while true do
+  coroutine.yield()
+  local shellRunning = false
+  for _, pid in pairs(sched.processes()) do
+--    print(pid, shellPID)
+    if pid == shellPID then
+      shellRunning = true
+    end
+  end
+--  print(shellRunning)
+  if not shellRunning then
+    shellPID = sched.spawn(function()return ok(logger)end, "shell", userspaceError)
+  end
+end

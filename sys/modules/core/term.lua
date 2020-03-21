@@ -154,6 +154,7 @@ function term.read(hist) -- it is ALWAYS advisable to use this function over io.
       term.setCursor(_x, _y)
     end
   end
+  local reason = "enter"
   repeat
     redraw()
     local sig, event, _, char, code = coroutine.yield()
@@ -176,11 +177,16 @@ function term.read(hist) -- it is ALWAYS advisable to use this function over io.
         end
         buffer = (hist[hpos] or "")
       end
+    elseif event == "interrupt" then
+      print("^C")
+      error("interrupted")
+    elseif event == "exit" then
+      reason = "exit"
     end
-  until char == rtn
+  until char == rtn or event == "exit"
   buffer = buffer .. "\n"
   redraw()
-  return buffer
+  return buffer, reason
 end
 
 function term.getViewport()
