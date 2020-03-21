@@ -1,5 +1,5 @@
 # Build O-Kernel
 
 all:
-	luacomp base.lua -Opkern.lua
-	mv pkern.lua ../boot/pkern.lua
+	luacomp base.lua -Okernel.lua
+	mv kernel.lua ../boot/kernel.lua

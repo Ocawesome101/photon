@@ -78,7 +78,7 @@ Copy the resulting script to `/boot` in your OpenComputers filesystem.
           - [X] set
           - [X] unset
           - [X] wc
-          - [ ] mount
+          - [X] mount
           - [ ] umount
         - [ ] Aliases
         - [X] Variables (ish)

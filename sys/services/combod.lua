@@ -1,12 +1,14 @@
 -- these services are basically event listeners --
 
 local computer = require("computer")
-local tty = require("tty")
+--local tty = require("tty")
+local term = require("term")
 
 local pressed = {}
 
 local c = 0x2E
 local d = 0x20
+local e = 18
 local lctrl = 0x1D
 local rctrl = 0x9D
 local right = 205
@@ -21,6 +23,8 @@ while true do
         computer.pushSignal("interrupt")
       elseif pressed[d] then
         computer.pushSignal("exit")
+      elseif pressed[e] then
+        term.clear()
 --[[      elseif pressed[right] then
         tty.setTTY(tty.getTTY() + 1)
       elseif pressed[left] then

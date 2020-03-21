@@ -6,8 +6,9 @@ local computer = require("computer")
 local term = require("term")
 local shell = require("shell")
 local gpu = require("drivers").loadDriver("gpu")
-local tty = require("tty")
-local running_tty = tty.getTTY()
+local motd = require("motd")
+--local tty = require("tty")
+--local running_tty = tty.getTTY()
 
 local logo =
 [[Welcome to....        __            
@@ -20,6 +21,7 @@ local logo =
 
 term.clear()
 print(logo)
+print(motd.random_shell())
 
 shell.setErrorHandler(function(e,l)io.stderr:write(debug.traceback(e,l) .. "\n")end)
 

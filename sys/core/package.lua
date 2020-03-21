@@ -4,7 +4,7 @@ local fs = drivers.loadDriver("filesystem")
 
 _G.package = {}
 
-package.path = "/sys/modules/?.lua;/sys/modules/?/init.lua;/sys/modules/core/?.lua;/sys/modules/core/?/init.lua"
+package.path = "/sys/modules/?.lua;/sys/modules/?/init.lua;/sys/modules/core/?.lua;/sys/modules/core/?/init.lua;/users/shared/?.lua;/users/shared/?/init.lua"
 
 package.loaded = {
   ["_G"] = _G,
@@ -72,7 +72,7 @@ function _G.require(modname)
     end
     local ok, err = dofile(path)
     if not ok then
-      return nil, err
+      error(err)
     end
     package.loaded[modname] = ok
     return ok

@@ -3,7 +3,7 @@
 local shell = require("shell")
 local term = require("term")
 local fs = require("drivers").loadDriver("filesystem")
-local prompts = require("utils/prompts")
+local prompts = require("prompts")
 
 local args, opts = shell.parse(...)
 

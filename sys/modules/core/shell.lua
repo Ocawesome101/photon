@@ -3,7 +3,7 @@
 local shell = {}
 local fs = require("drivers").loadDriver("filesystem")
 local sched = require("sched")
-local splitter = require("utils/splitter")
+local splitter = require("splitter")
 local errHandler = error
 
 local escapes = {
@@ -21,12 +21,12 @@ local escapes = {
   end
 }
 
-fs.makeDirectory("/users")
-os.setenv("PWD", "/users")
+fs.makeDirectory("/users/home")
+os.setenv("PWD", "/users/home")
 os.setenv("PATH", "/sys/programs")
 os.setenv("PS1", "\\u@\\h: \\w\\$ ")
 os.setenv("USER", "root")
-os.setenv("HOME", "/users")
+os.setenv("HOME", "/users/home")
 
 function shell.resolve(path)
   checkArg(1, path, "string")

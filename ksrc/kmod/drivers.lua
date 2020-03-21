@@ -1,5 +1,5 @@
 -- Load drivers
-local driverpath = "/boot/drivers/"
+local driverpath = "/sys/drivers/"
 local function load_driver(driver)
   if bootfs.exists(driverpath .. driver .. ".lua") then
     local handle, err = bootfs.open(driverpath .. driver .. ".lua")

@@ -10,5 +10,6 @@ if opts.r then
 elseif opts.s then
   computer.shutdown(false)
 else
-  error("usage: power -s|-r", 0)
+  io.stderr:write("usage: power -s|-r\n")
+  return 1
 end
