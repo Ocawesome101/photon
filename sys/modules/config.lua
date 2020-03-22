@@ -1,6 +1,6 @@
 -- load config files --
 
-local serialization = require("utils/serialization")
+local serialization = require("serialization")
 
 local config = {}
 

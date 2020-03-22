@@ -68,7 +68,7 @@ function _G.require(modname)
   else
     local path, err = package.searchpath(modname, package.path, ".", "/")
     if not path then
-      return nil, err
+      error(err)
     end
     local ok, err = dofile(path)
     if not ok then

@@ -3,7 +3,7 @@
 local shell = require("shell")
 local gpu = require("drivers").loadDriver("gpu")
 local term = require("term")
-local serialization = require("utils/serialization")
+local serialization = require("serialization")
 
 local args, options = shell.parse(...)
 

@@ -1,6 +1,7 @@
 -- Finish off the `os` API, mostly --
 
 local sched = require("sched")
+local computer = require("computer")
 
 local env = {}
 
@@ -31,4 +32,12 @@ function os.exit(code)
     sched.send_ipc(sched.parent(), code)
   end
   sched.kill(sched.current())
+end
+
+function os.sleep(time)
+  local start = computer.uptime()
+  local dest = start + time
+  repeat
+    computer.pullSignal()
+  until computer.uptime() >= dest
 end

@@ -1,6 +1,6 @@
 -- text: OpenOS-compatible text API --
 
-local splitter = require("utils/splitter")
+local splitter = require("splitter")
 
 local text = {}
 

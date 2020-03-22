@@ -5,7 +5,6 @@ local logger = ...
 logger.prefix = "Proton Userspace:"
 local drivers = require("drivers")
 local fs = drivers.loadDriver("filesystem")
-local component = require("component")
 local sched = require("sched")
 
 function _G.print(...)

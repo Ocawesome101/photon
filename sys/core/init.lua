@@ -57,13 +57,8 @@ for _, item in ipairs(init_config) do
   if not ok then
     logger.log("ERR:", item.file .. ":", err)
   else
-    if item.type == "script" then
-      logger.log("Running startup script:", item.name)
-      xpcall(function()return ok(logger)end, function(...)logger.log("ERR:", ...)end)
-    elseif item.type == "daemon" then
-      logger.log("Starting service:", item.name)
-      sched.spawn(function()return ok(logger)end, item.name)
-    end
+    logger.log("Running startup script:", item.name)
+    xpcall(function()return ok(logger)end, function(...)logger.log("ERR:", ...)end)
   end
 end
 
