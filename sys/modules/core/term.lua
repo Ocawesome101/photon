@@ -90,16 +90,17 @@ function term.clear()
   term.setCursor(1, 1)
 end
 
-function term.write(str, wrap)
+function term.write(str, wrapmode)
   checkArg(1, str, "string")
-  checkArg(2, wrap, "boolean", "nil")
+  checkArg(2, wrapmode, "string", "nil")
   local old = cursor
   cursor = false
   cursor_update()
   str = str:gsub("\t", "    ")
-  local wrap = wrap or true
+  local wrap = (wrapmode == "precise" and wrapmode) or "word"
   local words = {}
   local word = ""
+  local printed = 0
   for char in str:gmatch(".") do
     word = word .. char
     if char == " " or char == "\n" then
@@ -112,15 +113,18 @@ function term.write(str, wrap)
   end
   for i=1, #words, 1 do
     local word = words[i]
-    if x + #word + 1 > w then
+    if x + #word + 1 > w and wrap == "word" then
       newline()
+      printed = printed + 1
     end
     for char in word:gmatch(".") do
       if char == "\n" then
         newline()
+        printed = printed + 1
       else
         if x + 1 > w then
-          newline()
+           newline()
+           printed = printed + 1
         end
         gpu.set(x, y, char)
         x = x + 1
@@ -129,6 +133,7 @@ function term.write(str, wrap)
   end
   cursor = old
   cursor_update()
+  return printed
 end
 
 local bksp = string.char(8)
@@ -145,7 +150,10 @@ function term.read(hist) -- it is ALWAYS advisable to use this function over io.
   local hpos = #hist + 1
   local function redraw(bk)
     term.setCursor(startX, startY)
-    term.write(buffer)
+    local printed = term.write(buffer, "precise")
+    if startY + printed > h then
+      startY = h - printed
+    end
     if bk then
       cursor = false
       local _x, _y = term.getCursor()
@@ -166,12 +174,12 @@ function term.read(hist) -- it is ALWAYS advisable to use this function over io.
       elseif char == bksp then
         buffer = buffer:sub(1, -2)
         redraw(true)
-      elseif char == up then
+      elseif code == 200 then
         if hpos > 1 then
           hpos = hpos - 1
         end
         buffer = (hist[hpos] or "")
-      elseif char == down then
+      elseif code == 208 then
         if hpos < #hist then
           hpos = hpos + 1
         end
