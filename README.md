@@ -40,14 +40,15 @@ Available `rc` commands are `start`, `stop`, `restart`, `disable`, and `enable`.
           - [ ] OpenFS
           - [ ] OpenUPT
       - [X] Graphics Card
-      - [ ] Networking
-        - [ ] Internet Card
-        - [ ] Wireless Card
-      - [ ] Redstone Card
+      - [X] Networking
+        - [X] Internet Card
+        - [X] Network Card
+      - [X] Redstone Card
       - [ ] Data Card
       - [ ] EEPROM
       - [ ] 3D Printer
       - [ ] Robot
+    - [ ] Some kind of network stack
     - [ ] Libraries
       - [X] Lua Standard
         - [X] io
