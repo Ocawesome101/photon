@@ -25,7 +25,7 @@ print(motd.random_shell())
 
 shell.setErrorHandler(function(e,l)io.stderr:write(debug.traceback(e,l) .. "\n")end)
 
-local history = {}
+local history = {""}
 while true do
   if #history == 16 then
     table.remove(history, 1)
@@ -36,7 +36,7 @@ while true do
   local cmd = term.read(history)
   if cmd ~= "\n" then
     cmd = cmd:gsub("\n", "")
-    table.insert(history, cmd)
+    table.insert(history, 1, cmd)
     local ok, err = pcall(function()return shell.execute(cmd)end)
     if not ok and err then
       io.stderr:write(debug.traceback(err) .. "\n")

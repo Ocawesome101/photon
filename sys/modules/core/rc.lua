@@ -40,6 +40,7 @@ function rc.stop(svc)
     return false, svc .. ": Service is not running"
   end
   sched.kill(running[svc])
+  running[svc] = nil
   update()
 end
 

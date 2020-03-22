@@ -178,11 +178,21 @@ function term.read(hist) -- it is ALWAYS advisable to use this function over io.
         if hpos > 1 then
           hpos = hpos - 1
         end
+        buffer = (" "):rep(#buffer)
+        local old = cursor
+        cursor = false
+        redraw(true)
+        cursor = old
         buffer = (hist[hpos] or "")
       elseif code == 208 then
         if hpos < #hist then
           hpos = hpos + 1
         end
+        buffer = (" "):rep(#buffer)
+        local old = cursor
+        cursor = false
+        redraw(true)
+        cursor = old
         buffer = (hist[hpos] or "")
       end
     elseif event == "interrupt" then
