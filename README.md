@@ -4,7 +4,7 @@ Proton is a modular, lightweight hybrid kernel for the OpenComputers Minecraft m
 
 ## Building
 
-While a precompiled kernel does ship with this Git repository, you may want to build it yourself. To do so, you will need [Luacomp](https://github.com/Adorable-Catgirl/Luacomp) and Lua 5.3.
+While a precompiled kernel does ship with Proton, you may want to build it yourself. To do so, you will need [Luacomp](https://github.com/Adorable-Catgirl/Luacomp) and Lua 5.3.
 
 Download Luacomp to somewhere in your `$PATH`, then execute the following commands:
 ```bash
@@ -12,6 +12,16 @@ cd /path/to/your/local/copy/ksrc
 make
 ```
 Copy the resulting script to `/boot` in your OpenComputers filesystem.
+
+## Background Services
+
+Proton supports background services through the use of the `rc` shell command. By default, though Proton ships with a few background services available, none are enabled. Default services are:
+
+  * `combod`: Listens for keyboard shortcuts and queues signals appropriately
+  * `mountd`: Automatically (un)mounts filesystems when they are added or removed
+  * `cursorblink`: Blinks the cursor
+
+Available `rc` commands are `start`, `stop`, `restart`, `disable`, and `enable`.
 
 ## Progress
 
