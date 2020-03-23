@@ -3,7 +3,9 @@
 local sched = require("sched")
 local computer = require("computer")
 
-local env = {}
+local env = {
+  HOSTNAME = "proton"
+}
 
 function os.setenv(varname, value)
   checkArg(1, varname, "string")

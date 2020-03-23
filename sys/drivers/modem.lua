@@ -2,7 +2,7 @@
 
 local component = ...
 
-local modem_component = component.list("modem")
+local modem_component = component.list("modem")()
 
 if not modem_component then
   return nil
@@ -10,13 +10,12 @@ end
 
 local raw = component.proxy(modem_component)
 
-setmetatable(modem, __index = function(tbl, k) error("Attempt to index modem." .. k .. " (a nil value)") end)
+local modem = {}
+setmetatable(modem, {__index = function(tbl, k) error("Attempt to index modem." .. k .. " (a nil value)") end})
 
 if raw.isWireless() then
   raw.setStrength(512)
 end
-
-local modem = {}
 
 function modem.maxPacketSize()
   return raw.maxPacketSize()
@@ -29,14 +28,12 @@ end
 function modem.open(port)
   checkArg(1, port, "number", "nil")
   local port = port or 80
-  opened[port] = true
   return raw.open(port)
 end
 
 function modem.close(port)
   checkArg(1, port, "number", "nil")
   local port = port or 80
-  opened[port] = nil
   return raw.close(port)
 end
 
@@ -50,6 +47,7 @@ function modem.send(addr, port, ...)
   checkArg(1, addr, "string", "nil")
   checkArg(2, port, "number", "nil")
   local port = port or 80
+  modem.open(port)
   local args = {...}
   if args == {} then
     return nil, "Message data required"
