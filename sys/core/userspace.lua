@@ -6,6 +6,7 @@ logger.prefix = "Proton Userspace:"
 local drivers = require("drivers")
 local fs = drivers.loadDriver("filesystem")
 local sched = require("sched")
+local computer = require("computer")
 
 function _G.print(...)
   local args = {...}
@@ -63,9 +64,9 @@ local ok, err = loadfile((fs.exists(shell) and shell) or "/sys/programs/shell.lu
 if not ok then
   logger.prefix = "SHELL ERROR:"
   logger.log(err)
-  require("computer").beep(400, 1)
+  computer.beep(400, 1)
   while true do
-    require("computer").pullSignal()
+    computer.pullSignal()
   end
 end
 
@@ -74,6 +75,11 @@ local function userspaceError(err, lvl)
   io.write("ERROR IN THREAD " .. sched.current() .. ": " .. sched.info(sched.current()).name .. "\n")
   io.write(trace)
   sched.kill(sched.current())
+end
+
+local initCompletionTime = computer.uptime() - os.initStartupTime()
+function os.initStartupTime()
+  return initCompletionTime
 end
 
 local shellPID

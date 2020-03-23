@@ -1,5 +1,6 @@
 -- P-Kernel, the heart of Proton --
 
+local _KERNEL_START = computer.uptime()
 local _BUILD_ID = "$[[git rev-parse --short HEAD]]"
 local _KERNEL_NAME = "Proton"
 function os.build()
@@ -13,7 +14,6 @@ end
 logger.log("Initializing")
 logger.log("Kernel revision:", _BUILD_ID)
 --#include "kmod/config.lua"
---#include "kmod/drivers.lua"
 --#include "kmod/scheduler.lua"
 --#include "kmod/userspace.lua"
 --#include "kmod/init.lua"

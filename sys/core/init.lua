@@ -1,9 +1,14 @@
 -- Init system --
 
+local start = computer.uptime()
 local logger = ...
-local fs = drivers.filesystem
+local fs = component.proxy(computer.getBootAddress())
 
 logger.prefix = "Proton Init:"
+
+function os.initStartupTime()
+  return start
+end
 
 logger.log("Started")
 
@@ -18,7 +23,6 @@ local init_config = {
   {type = "script", name = "userspace", file = "/sys/core/userspace.lua"}
 }
 
-local fs = drivers.filesystem
 function _G.loadfile(file, mode, env, prefix)
   checkArg(1, file, "string")
   checkArg(2, mode, "string", "nil")
@@ -34,11 +38,11 @@ function _G.loadfile(file, mode, env, prefix)
   
   local data = ""
   repeat
-    local chunk = handle.read(math.huge)
+    local chunk = fs.read(handle, math.huge)
     data = data .. (chunk or "")
   until not chunk
   
-  handle.close()
+  fs.close(handle)
   return load(prefix .. data, "=" .. file, mode, env)
 end
 

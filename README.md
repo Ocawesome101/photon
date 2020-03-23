@@ -48,6 +48,12 @@ Available `rc` commands are `start`, `stop`, `restart`, `disable`, and `enable`.
       - [ ] EEPROM
       - [ ] 3D Printer
       - [ ] Robot
+      - [ ] Computronics
+        - [ ] Tape Drive
+        - [ ] Speaker
+        - [ ] Beep Card
+        - [ ] Sound Card
+        - [ ] Noise Card
     - [ ] Some kind of network stack
     - [ ] Libraries
       - [X] Lua Standard

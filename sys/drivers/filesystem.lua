@@ -2,7 +2,7 @@
 
 local fs = {}
 
-local component = component
+local component = ...
 local boot_address = computer.getBootAddress()
 
 local mounts = {

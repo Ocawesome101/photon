@@ -18,4 +18,8 @@ local s, r = sched.spawn(function()return ok(logger)end, "init", freeze)
 if not s then
   freeze(r)
 end
+local _STARTUP_TIME = computer.uptime() - _KERNEL_START
+function os.kernelStartupTime()
+  return _STARTUP_TIME
+end
 sched.start()

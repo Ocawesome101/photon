@@ -1,6 +1,6 @@
 -- Device drivers --
 
-local loaded = drivers
+local loaded = {}
 local driverpath = "/sys/drivers/"
 local component = component
 
