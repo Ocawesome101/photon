@@ -10,7 +10,7 @@ local pat = "/sys/services/"
 local running = {}
 
 local function update()
-  for i=1,  #running, 1 do
+  for i, _ in pairs(running) do
     if not sched.info(running[i]) then
       running[i] = nil
     end
@@ -45,10 +45,7 @@ function rc.stop(svc)
 end
 
 function rc.restart(svc)
-  local ok, err = rc.stop(svc)
-  if not ok then
-    return false, err
-  end
+  rc.stop(svc)
   ok, err = rc.start(svc)
   if not ok then
     return false, err

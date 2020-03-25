@@ -1,5 +1,7 @@
 -- these services are basically event listeners --
 
+require("sched").detach()
+
 local computer = require("computer")
 --local tty = require("tty")
 local term = require("term")

@@ -118,6 +118,11 @@ do
     
     return processes[pid].parent
   end
+
+  function sched.detach() -- Detach a process from any other processes
+    local pid = currentpid
+    processes[pid].parent = 0
+  end
   
   function sched.processes()
     local proc = {}

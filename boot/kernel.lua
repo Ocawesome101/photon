@@ -1,7 +1,7 @@
 -- P-Kernel, the heart of Photon --
 
 local _KERNEL_START = computer.uptime()
-local _BUILD_ID = "fb8cd14"
+local _BUILD_ID = "c89499d"
 local _KERNEL_NAME = "Photon"
 function os.build()
   return _BUILD_ID
@@ -198,6 +198,11 @@ do
     end
     
     return processes[pid].parent
+  end
+
+  function sched.detach() -- Detach a process from any other processes
+    local pid = currentpid
+    processes[pid].parent = 0
   end
   
   function sched.processes()

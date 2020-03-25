@@ -1,5 +1,7 @@
 -- mountd: Automatically mount/unmount filesystems --
 
+require("sched").detach()
+
 local fs = require("drivers").loadDriver("filesystem")
 local computer = require("computer")
 local signals = require("signals")

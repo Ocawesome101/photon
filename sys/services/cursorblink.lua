@@ -1,5 +1,7 @@
 -- blink the cursor --
 
+require("sched").detach()
+
 local term = require("term")
 
 while true do

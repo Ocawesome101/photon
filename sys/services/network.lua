@@ -1,5 +1,7 @@
 -- in-game networking --
 
+require("sched").detach()
+
 local modem = require("drivers").loadDriver("modem")
 local computer = require("computer")
 local cget = require("drivers").loadDriver("component/get")
