@@ -4,7 +4,7 @@ local sched = require("sched")
 local computer = require("computer")
 
 local env = {
-  HOSTNAME = "proton"
+  HOSTNAME = "photon"
 }
 
 function os.setenv(varname, value)

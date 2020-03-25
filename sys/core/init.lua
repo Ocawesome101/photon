@@ -4,7 +4,7 @@ local start = computer.uptime()
 local logger = ...
 local fs = component.proxy(computer.getBootAddress())
 
-logger.prefix = "Proton Init:"
+logger.prefix = "Photon Init:"
 
 function os.initStartupTime()
   return start

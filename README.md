@@ -1,10 +1,10 @@
-# Proton
+# Photon
 
-Proton is a modular, lightweight hybrid kernel for the OpenComputers Minecraft mod.
+Photon is a modular, lightweight hybrid kernel for the OpenComputers Minecraft mod.
 
 ## Building
 
-While a precompiled kernel does ship with Proton, you may want to build it yourself. To do so, you will need [Luacomp](https://github.com/Adorable-Catgirl/Luacomp) and Lua 5.3.
+While a precompiled kernel does ship with Photon, you may want to build it yourself. To do so, you will need [Luacomp](https://github.com/Adorable-Catgirl/Luacomp) and Lua 5.3.
 
 Download Luacomp to somewhere in your `$PATH`, then execute the following commands:
 ```bash
@@ -15,7 +15,7 @@ Copy the resulting script to `/boot` in your OpenComputers filesystem.
 
 ## Background Services
 
-Proton supports background services through the use of the `rc` shell command. By default, though Proton ships with a few background services available, none are enabled. Default services are:
+Photon supports background services through the use of the `rc` shell command. By default, though Photon ships with a few background services available, none are enabled. Default services are:
 
   * `combod`: Listens for keyboard shortcuts and queues signals appropriately
   * `mountd`: Automatically (un)mounts filesystems when they are added or removed
@@ -25,7 +25,7 @@ Available `rc` commands are `start`, `stop`, `restart`, `disable`, and `enable`.
 
 ## Progress
 
-- [ ] Proton
+- [ ] Photon
   - [X] Kernel
     - [X] Component Proxies
     - [X] Logging
@@ -51,9 +51,9 @@ Available `rc` commands are `start`, `stop`, `restart`, `disable`, and `enable`.
       - [ ] Computronics
         - [ ] Tape Drive
         - [ ] Speaker
-        - [ ] Beep Card
-        - [ ] Sound Card
-        - [ ] Noise Card
+        - [X] Beep Card
+        - [X] Sound Card
+        - [X] Noise Card
     - [ ] Some kind of network stack
     - [ ] Libraries
       - [X] Lua Standard
@@ -72,7 +72,7 @@ Available `rc` commands are `start`, `stop`, `restart`, `disable`, and `enable`.
           - [ ] notes
         - [ ] tui
     - [ ] Interfaces
-      - [ ] Proton Shell
+      - [ ] Photon Shell
         - [ ] Commands
           - [X] ls
           - [X] cp
@@ -113,17 +113,10 @@ Available `rc` commands are `start`, `stop`, `restart`, `disable`, and `enable`.
         - [ ] Buffering?
           - [ ] HW buffering (T3 only), 80x25
           - [ ] SW buffering (RAM heavy), up to 160x50
-    - [ ] Proton Package Manager
+    - [ ] Photon Package Manager
       - [ ] Repo lists
       - [ ] Package lists
       - [ ] Packages
         - [ ] Install
         - [ ] Remove
         - [ ] Search
-  - [ ] Installer
-    - [ ] ? PPM-compatible
-      - [ ] Generate installed-package list
-    - [ ] Base system
-    - [ ] Modules
-      - [ ] Selection
-      - [ ] Installation

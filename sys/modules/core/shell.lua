@@ -17,7 +17,7 @@ local escapes = {
     return "#"
   end,
   ["h"] = function()
-    return os.getenv("HOSTNAME") or "proton::" .. os.build()
+    return os.getenv("HOSTNAME") or "photon::" .. os.build()
   end
 }
 

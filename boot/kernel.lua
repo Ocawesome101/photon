@@ -1,8 +1,8 @@
--- P-Kernel, the heart of Proton --
+-- P-Kernel, the heart of Photon --
 
 local _KERNEL_START = computer.uptime()
-local _BUILD_ID = "f8bb69f"
-local _KERNEL_NAME = "Proton"
+local _BUILD_ID = "fb8cd14"
+local _KERNEL_NAME = "Photon"
 function os.build()
   return _BUILD_ID
 end

@@ -2,7 +2,7 @@
 
 local logger = ...
 
-logger.prefix = "Proton Userspace:"
+logger.prefix = "Photon Userspace:"
 local drivers = require("drivers")
 local fs = drivers.loadDriver("filesystem")
 local sched = require("sched")
