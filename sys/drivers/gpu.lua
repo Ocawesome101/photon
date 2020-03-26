@@ -40,6 +40,7 @@ function gpu.setCurrent(num)
   end
   boundGPU = num
   gpu = component.proxy(gpus[boundGPU])
+  gpu.bind(screens[boundScreen])
 end
 
 function gpu.setScreen(num)
