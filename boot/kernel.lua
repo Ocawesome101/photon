@@ -1,7 +1,7 @@
 -- P-Kernel, the heart of Photon --
 
 local _KERNEL_START = computer.uptime()
-local _BUILD_ID = "110a4c4"
+local _BUILD_ID = "8024487"
 local _KERNEL_NAME = "Photon"
 function os.build()
   return _BUILD_ID

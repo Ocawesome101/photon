@@ -103,6 +103,10 @@ function shell.execute(cmd, ...)
   if not fs.exists(absolute) or absolute == "" then
     error(cmd .. ": Command not found")
   end
+
+  if tokens[1] then
+    os.setenv("_", tokens[1])
+  end
   
   local ok, err = loadfile(absolute)
   if not ok and err then

@@ -147,7 +147,7 @@ function term.read(hist) -- it is ALWAYS advisable to use this function over io.
   local buffer = ""
   local startX, startY = term.getCursor()
   local hist = hist or {}
-  local hpos = #hist + 1
+  local hpos = 0
   local function redraw(bk)
     term.setCursor(startX, startY)
     local printed = term.write(buffer, "precise")
@@ -174,21 +174,21 @@ function term.read(hist) -- it is ALWAYS advisable to use this function over io.
       elseif char == bksp then
         buffer = buffer:sub(1, -2)
         redraw(true)
-      elseif code == 200 then
-        if hpos > 1 then
-          hpos = hpos - 1
+      elseif code == 200 then -- up
+        if hpos < #hist then
+          hpos = hpos + 1
         end
-        buffer = (" "):rep(#buffer)
+        buffer = (" "):rep(#buffer + 1)
         local old = cursor
         cursor = false
         redraw(true)
         cursor = old
         buffer = (hist[hpos] or "")
-      elseif code == 208 then
-        if hpos < #hist then
-          hpos = hpos + 1
+      elseif code == 208 then -- down
+        if hpos > 0 then
+          hpos = hpos - 1
         end
-        buffer = (" "):rep(#buffer)
+        buffer = (" "):rep(#buffer + 1)
         local old = cursor
         cursor = false
         redraw(true)
@@ -200,6 +200,8 @@ function term.read(hist) -- it is ALWAYS advisable to use this function over io.
       error("interrupted")
     elseif event == "exit" then
       reason = "exit"
+    elseif event == "clipboard" then
+      buffer = buffer .. char
     end
   until char == rtn or event == "exit"
   buffer = buffer .. "\n"
