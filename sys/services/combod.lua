@@ -1,6 +1,10 @@
 -- these services are basically event listeners --
 
-require("sched").detach()
+local sched = require("sched")
+sched.detach()
+sched.unregister("interrupt")
+sched.register("key_down")
+sched.register("key_up")
 
 local computer = require("computer")
 --local tty = require("tty")
@@ -17,7 +21,7 @@ local right = 205
 local left = 203
 
 while true do
-  local sig, e, _, id, code = computer.pullSignal()
+  local e, _, id, code = computer.pullSignal()
   if e == "key_down" then
     pressed[code] = true
     if pressed[lctrl] or pressed[rctrl] then

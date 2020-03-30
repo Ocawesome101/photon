@@ -1,12 +1,15 @@
 -- in-game networking --
 
-require("sched").detach()
-
+local sched = require("sched")
 local modem = require("drivers").loadDriver("modem")
 local computer = require("computer")
 local cget = require("drivers").loadDriver("component/get")
 local fs = require("drivers").loadDriver("filesystem")
 local config = require("config")
+
+sched.detach()
+sched.register("modem_message")
+sched.unregister("interrupt")
 
 local netcfg = config.loadWithDefaults("/sys/config/network.cfg", {hostname = os.getenv("HOSTNAME") or computer.address():sub(1, 8), timeout = 5})
 

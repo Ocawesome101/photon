@@ -4,6 +4,7 @@ local shell = {}
 local fs = require("drivers").loadDriver("filesystem")
 local sched = require("sched")
 local splitter = require("splitter")
+local computer = require("computer")
 local errHandler = error
 
 local escapes = {
@@ -23,9 +24,8 @@ local escapes = {
 
 fs.makeDirectory("/users/home")
 os.setenv("PWD", "/users/home")
-os.setenv("PATH", "/sys/programs")
+os.setenv("PATH", "/sys/programs:/users/programs")
 os.setenv("PS1", "\\u@\\h: \\w\\$ ")
-os.setenv("USER", "root")
 os.setenv("HOME", "/users/home")
 
 function shell.resolve(path)
@@ -113,8 +113,17 @@ function shell.execute(cmd, ...)
     error(err)
   end
   
-  return ok(table.unpack(tokens))
-  --return sched.spawn(function()return ok(table.unpack(tokens))end, absolute, errHandler)
+  --return ok(table.unpack(tokens))
+  local pid = sched.spawn(function()return ok(table.unpack(tokens))end, absolute, errHandler)
+  repeat
+    local running = false
+    for _, p in pairs(sched.processes()) do
+      if p == pid then
+        running = true
+      end
+    end
+    local from, evt, status = computer.pullSignal()
+  until not running
 end
 
 function shell.parse(...)

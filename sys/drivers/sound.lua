@@ -19,8 +19,6 @@ end
 
 local snd = {}
 
-setmetatable(snd, { __index = function(_, k) error("Attempt to index sound." .. k .. " (a nil value)") end })
-
 snd.noise = noise
 snd.beep = beep
 snd.sound = sound
@@ -53,5 +51,7 @@ function snd.sounds(sounds)
     snd.sound.delay(sounds[4])
   end
 end
+
+setmetatable(snd, { __index = function(_, k) error("Attempt to index sound." .. k .. " (a nil value)") end })
 
 return snd

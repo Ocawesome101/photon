@@ -1,6 +1,8 @@
 -- blink the cursor --
 
-require("sched").detach()
+local sched = require("sched")
+sched.detach()
+sched.unregister("interrupt")
 
 local term = require("term")
 

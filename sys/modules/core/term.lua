@@ -1,5 +1,6 @@
 -- mostly OpenOS-compatible term API. --
 
+local sched = require("sched")
 local gpu, err = require("drivers").loadDriver("gpu")
 if not gpu then
   error(err)
@@ -143,14 +144,17 @@ local down = string.char(208)
 local max = 127
 local min = 32
 
-function term.read(hist) -- it is ALWAYS advisable to use this function over io.read, as io.read returns characters and does not support deletion.
+function term.read(hist, rep)
+  checkArg(1, hist, "table", "nil")
+  checkArg(2, rep, "string", "nil")
   local buffer = ""
   local startX, startY = term.getCursor()
+  sched.register("key_down")
   local hist = hist or {}
   local hpos = 0
   local function redraw(bk)
     term.setCursor(startX, startY)
-    local printed = term.write(buffer, "precise")
+    local printed = term.write((rep and rep:sub(1,1):rep(#buffer)) or buffer, "precise")
     if startY + printed > h then
       startY = h - printed
     end

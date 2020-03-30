@@ -55,14 +55,36 @@ if ok then
 end
 
 local sched = sched or require("sched")
+local drivers = drivers or require("drivers")
+local gpu = (drivers.loadDriver and drivers.loadDriver("gpu")) or component.proxy(component.list("gpu")())
+
+local function panic(...)
+  local computer = computer or require("computer")
+  local msg = table.concat({"PANIC:", ...})
+  local trace = debug.traceback(msg)
+  local y = 1
+  gpu.setForeground(0x000000)
+  gpu.setBackground(0xFFFFFF)
+  for line in trace:gmatch("^\n+") do
+    gpu.set(1, y, line)
+  end
+  for _, pid in pairs(sched.processes()) do
+    if pid ~= 1 then
+      sched.kill(pid)
+    end
+  end
+  while true do
+    computer.beep(500, 1)
+  end
+end
 
 for _, item in ipairs(init_config) do
   local ok, err = loadfile(item.file)
   if not ok then
-    logger.log("ERR:", item.file .. ":", err)
+    error(item.file .. ":", err)
   else
     logger.log("Running startup script:", item.name)
-    xpcall(function()return ok(logger)end, function(...)logger.log("ERR:", ...)end)
+    ok(logger)
   end
 end
 

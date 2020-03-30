@@ -56,6 +56,9 @@ function event.pull(timeout, ...)
   local max = (timeout and computer.uptime() + timeout) or math.huge
   repeat
     local data = {pull()}
+    if data[2] == "interrupt" then
+      error("interrupted")
+    end
     for k, v in pairs(listeners) do
       if v.event == data[2] then
         local ok, returned = pcall(v.callback, table.unpack(data, 2))
@@ -98,3 +101,5 @@ end
 computer.pullSignal = event.pull
 
 event.push = computer.pushSignal
+
+package.loaded.event = event

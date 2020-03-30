@@ -31,7 +31,7 @@ end
 
 function os.exit(code)
   if code and type(code) == "number" then
-    sched.send_ipc(sched.parent(), code)
+    sched.send_ipc(sched.parent(), "child_exit", code)
   end
   sched.kill(sched.current())
 end
@@ -40,6 +40,6 @@ function os.sleep(time)
   local start = computer.uptime()
   local dest = start + time
   repeat
-    computer.pullSignal()
+    coroutine.yield()
   until computer.uptime() >= dest
 end

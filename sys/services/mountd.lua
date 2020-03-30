@@ -1,6 +1,10 @@
 -- mountd: Automatically mount/unmount filesystems --
 
-require("sched").detach()
+local sched = require("sched")
+sched.detach()
+sched.unregister("interrupt")
+sched.register("component_added")
+sched.register("component_removed")
 
 local fs = require("drivers").loadDriver("filesystem")
 local computer = require("computer")

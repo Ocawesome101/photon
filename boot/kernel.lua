@@ -1,7 +1,7 @@
 -- P-Kernel, the heart of Photon --
 
 local _KERNEL_START = computer.uptime()
-local _BUILD_ID = "8024487"
+local _BUILD_ID = "32bd944"
 local _KERNEL_NAME = "Photon"
 function os.build()
   return _BUILD_ID
@@ -149,7 +149,10 @@ do
       started = false,
       starttime = uptime(),
       runtime = 0,
-      sig = 0
+      sig = 0,
+      events = {
+	interrupt = true
+      }
     }
     processes[pid] = ps
 
@@ -161,7 +164,7 @@ do
     checkArg(1, pid, "number")
     for _, process in pairs(processes) do
       if process.pid == pid then
-        process.ipc_buffer[#process.ipc_buffer + 1] = {...}
+        process.ipc_buffer[#process.ipc_buffer + 1] = {currentpid, ...}
       end
     end
   end
@@ -174,6 +177,18 @@ do
         process.sig = signal
       end
     end
+  end
+
+  function sched.register(id)
+    checkArg(1, id, "string")
+    local pid = currentpid
+    processes[pid].events[id] = true
+  end
+
+  function sched.unregister(id)
+    checkArg(1, id, "string")
+    local pid = currentpid
+    processes[pid].events[id] = false
   end
   
   function sched.kill(pid)
@@ -241,7 +256,7 @@ do
         proc.started = true
         proc.running = true
         local ok, ret
-        if #sig > 0 then
+        if #sig > 0 and proc.events[sig[1]] then
           ok, ret = resume(proc.coro, sched.signals.event, table.unpack(sig))
         elseif #proc.ipc_buffer > 0 then
           local ipc = proc.ipc_buffer[1]
