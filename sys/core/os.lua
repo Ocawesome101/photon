@@ -34,6 +34,7 @@ function os.exit(code)
     sched.send_ipc(sched.parent(), "child_exit", code)
   end
   sched.kill(sched.current())
+  coroutine.yield()
 end
 
 function os.sleep(time)

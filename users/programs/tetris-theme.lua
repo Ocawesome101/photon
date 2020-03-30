@@ -80,13 +80,15 @@ local function one()
   b.beep({[t.b] = 0.25})
   os.sleep(0.2)
   b.beep({[t.c] = 0.25})
+  os.sleep(0.2)
+  b.beep({[t.d] = 0.5})
+  os.sleep(0.45)
+  b.beep({[t.e] = 0.5})
+  os.sleep(0.45)
 end
 
 local function two()
 end
 
-while true do
-  event.pull(0.1)
-  one()
-  two()
-end
+one()
+two()
