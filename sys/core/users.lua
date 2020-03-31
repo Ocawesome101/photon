@@ -4,8 +4,8 @@ local config = require("config")
 local sha3 = require("sha3")
 local term = require("term")
 
-local user = "guest"
-local uid = 0
+local user = "user"
+local uid = 1
 
 local cfg = config.loadWithDefaults("/sys/config/users.cfg", {
   {

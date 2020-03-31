@@ -5,6 +5,7 @@ local gpu, err = require("drivers").loadDriver("gpu")
 if not gpu then
   error(err)
 end
+local event
 
 local term = {}
 
@@ -147,6 +148,7 @@ local min = 32
 function term.read(hist, rep)
   checkArg(1, hist, "table", "nil")
   checkArg(2, rep, "string", "nil")
+  event = event or require("event")
   local buffer = ""
   local startX, startY = term.getCursor()
   sched.register("key_down")
@@ -169,7 +171,7 @@ function term.read(hist, rep)
   local reason = "enter"
   repeat
     redraw()
-    local sig, event, _, char, code = coroutine.yield()
+    local event, _, char, code = event.pull()
     if event == "key_down" then
       char = string.char(char)
       local byte = (string.byte(char) or 1)

@@ -69,7 +69,7 @@ local function create(mode, handle, berr)
       return nil, "Read mode was not enabled on this stream"
     end
     local a = a or "l"
-    if a == "*a" or a == "a" then
+    if a == "*a" or a == "a" or a == "*all" then
       local d = ""
       local start = computer.uptime()
       repeat

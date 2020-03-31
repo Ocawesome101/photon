@@ -6,7 +6,7 @@ sched.unregister("interrupt")
 sched.register("key_down")
 sched.register("key_up")
 
-local computer = require("computer")
+local event = require("event")
 --local tty = require("tty")
 local term = require("term")
 
@@ -21,14 +21,14 @@ local right = 205
 local left = 203
 
 while true do
-  local e, _, id, code = computer.pullSignal()
+  local e, _, id, code = event.pull()
   if e == "key_down" then
     pressed[code] = true
     if pressed[lctrl] or pressed[rctrl] then
       if pressed[c] then
-        computer.pushSignal("interrupt")
+        event.push("interrupt")
       elseif pressed[d] then
-        computer.pushSignal("exit")
+        event.push("exit")
       elseif pressed[e] then
         term.clear()
 --[[      elseif pressed[right] then

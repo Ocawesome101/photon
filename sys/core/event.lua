@@ -3,6 +3,9 @@
 local event = {}
 
 local computer = require("computer")
+local sched = require("sched")
+sched.register("key_down")
+sched.register("key_up")
 local pull = computer.pullSignal
 
 local listeners = {}
@@ -50,18 +53,22 @@ function event.cancel(id)
   return true
 end
 
-function event.pull(timeout, ...)
+function event.pull(timeout, filter)
   checkArg(1, timeout, "number", "nil")
-  local filters = {...}
+  checkArg(2, filter, "string", "nil")
+  local filters = {filter}
   local max = (timeout and computer.uptime() + timeout) or math.huge
   repeat
-    local data = {pull()}
-    if data[2] == "interrupt" then
+--    print("pulling")
+    local data = {coroutine.yield()}
+    table.remove(data, 1)
+    if data[1] == "interrupt" then
       error("interrupted")
     end
+--    print("listeners")
     for k, v in pairs(listeners) do
-      if v.event == data[2] then
-        local ok, returned = pcall(v.callback, table.unpack(data, 2))
+      if v.event == data[1] then
+        local ok, returned = pcall(v.callback, table.unpack(data, 1))
         if not ok then
           io.stderr:write("Evemt handler for '" .. v.event .. "' crashed: " .. returned .. "\n")
           listeners[k] = nil
@@ -71,6 +78,7 @@ function event.pull(timeout, ...)
         end
       end
     end
+--    print("timed")
     for k, v in pairs(timed) do
       if computer.uptime() >= v.last + v.interval then
         local ok, returned = pcall(v.callback)
@@ -85,14 +93,9 @@ function event.pull(timeout, ...)
         end
       end
     end
-    local send = true
-    for i, f in pairs(data) do
-      if data[i] ~= filters[i] and filters[i] ~= nil then
-        send = false
-      end
-    end
-    if send then
-      return table.unpack(data, 2)
+--    print(data[1], filter)
+    if data[1] == filter or filter == nil then
+      return table.unpack(data, 1)
     end
   until computer.uptime() >= max
   return nil
