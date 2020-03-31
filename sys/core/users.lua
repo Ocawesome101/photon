@@ -17,20 +17,32 @@ local cfg = config.loadWithDefaults("/sys/config/users.cfg", {
 
 local users = {}
 
-function users.login(u)
-  checkArg(1, u, "string")
+function users.sudo(...)
+  local u = "root"
   local times = 3
+  local args = {...}
   repeat
-    local pwd = sha3.sha256(term.read(nil, "*"))
+    io.write("root password: ")
+    local pwd = term.read(nil, "*"):sub(1, -2)
+    pwd = sha3.sha256(pwd)
+    io.write("\n")
     for i=1, #cfg, 1 do
       if cfg[i].name == u and cfg[i].password == pwd then
+        local olduser = user
+        local olduid = uid
         user = u
         uid = cfg[i].uid
         os.setenv("USER", u)
         os.setenv("UID", uid)
-        return true
+        local s, r = pcall(function()return require("shell").execute(table.unpack(args))end)
+        user = olduser
+        uid = olduid
+        os.setenv("USER", user)
+        os.setenv("UID", uid)
+        return s, r
       end
     end
+    io.stderr:write("invalid credentials\n")
   until times == 0
   return nil, "incorrect credentials"
 end

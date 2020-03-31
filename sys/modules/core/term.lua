@@ -171,8 +171,8 @@ function term.read(hist, rep)
   local reason = "enter"
   repeat
     redraw()
-    local event, _, char, code = event.pull()
-    if event == "key_down" then
+    local ev, _, char, code = event.pull()
+    if ev == "key_down" then
       char = string.char(char)
       local byte = (string.byte(char) or 1)
       if byte >= min and byte <= max then
@@ -180,6 +180,8 @@ function term.read(hist, rep)
       elseif char == bksp then
         buffer = buffer:sub(1, -2)
         redraw(true)
+      elseif byte == 13 then
+        char = rtn
       elseif code == 200 then -- up
         if hpos < #hist then
           hpos = hpos + 1

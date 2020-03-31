@@ -81,7 +81,7 @@ end
 for _, item in ipairs(init_config) do
   local ok, err = loadfile(item.file)
   if not ok then
-    error(item.file .. ":", err)
+    error(item.file .. ":" .. err)
   else
     logger.log("Running startup script:", item.name)
     ok(logger)
